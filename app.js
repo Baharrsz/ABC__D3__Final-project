@@ -7,8 +7,21 @@ d3.queue()
 
         let allMonthsData = getMonths(covidData);
         console.log("All months", allMonthsData);
+        let months = Object.keys(allMonthsData).sort()
 
-        let monthData = allMonthsData["2021-03"];
+        let dataPicker = d3.select('.data-picker__input');
+        var selectedData = dataPicker.property('value');        
+
+
+        let monthPicker = d3.select('.month-picker__input');
+        var selectedMonth = monthPicker.property('value');
+        monthPicker
+            .property('max', months.length - 1)
+            .on('change', () => {
+                selectedMonth = months[d3.event.target.value];
+
+
+                let monthData = allMonthsData[selectedMonth];
         monthData.forEach(location => {
             let found = countryCodes.find(country => country.alphaCode === location.isoCode);
             if (found) {
@@ -16,15 +29,19 @@ d3.queue()
         })
 
         console.log('monthData', monthData)
-        
-        let clrScaleCase = d3.scaleLinear()
+
+        let clrScale;
+        if (selectedData === 'casesPerMil') {
+            clrScale = d3.scaleLinear()
                             .domain([0,2500])
                             .range(['white', 'red'])
-
-        let clrScaleDeath = d3.scaleLinear()
+        } else {
+            clrScale = d3.scaleLinear()
                             .domain([0,100])
-                            .range(['white', 'blue'])                    
+                            .range(['white', 'blue'])  
+        }
         
+                
         let geoData = topojson.feature(mapData, mapData.objects.countries).features;
 
         geoData.forEach(feature => {
@@ -54,16 +71,27 @@ d3.queue()
             .merge(countries)
                 .attr('d', path)
                 .attr('fill', d => {
-                    if (d.properties.casesPerMil === undefined) {
-                        console.log(d); 
-                        return 'grey';}
-                    return clrScaleDeath(d.properties.deathsPerMil)})
-                
-
-
-    
+                    if (d.properties[selectedData] === undefined) return 'grey';
+                    return clrScale(d.properties[selectedData])})
 
     })
+
+
+
+            });
+
+
+
+
+
+
+
+
+
+
+        
+
+        
 
 
 
@@ -99,6 +127,18 @@ function cvdDataFormatter(row, idx, headers){
     
 }
 
+function codeDataFormatter(row) {
+
+    let zeroNum = 3 - row['Numeric code'].length;
+    if (zeroNum === 1)row['Numeric code'] = "0" + row['Numeric code'];
+    if (zeroNum === 2)row['Numeric code'] = "00" + row['Numeric code'];
+
+    return {
+        alphaCode: row['Alpha-3 code'],
+        numericCode: row['Numeric code']
+    }
+}
+
 function getMonths(data) {
         let monthsData = {};
         data.forEach((row, idx) => {
@@ -131,14 +171,3 @@ function getMonths(data) {
 
 }
 
-function codeDataFormatter(row) {
-
-    let zeroNum = 3 - row['Numeric code'].length;
-    if (zeroNum === 1)row['Numeric code'] = "0" + row['Numeric code'];
-    if (zeroNum === 2)row['Numeric code'] = "00" + row['Numeric code'];
-
-    return {
-        alphaCode: row['Alpha-3 code'],
-        numericCode: row['Numeric code']
-    }
-}
