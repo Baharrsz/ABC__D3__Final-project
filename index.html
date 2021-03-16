@@ -8,7 +8,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <section class="input"></section>
+    <section class="dashboard">
+        <div class="month-picker">
+            <input name="month-picker" type="range" class="month-picker__input">
+            <label class="month-picker__lable" for="month-picker">Pick a month</label>
+        </div>
+        <div class="data-picker">
+            <input name="data-picker" type="radio" class="data-picker__input" id="case" value="case" checked>
+            <label class="data-picker__lable" for="data-picker">New Cases per Million</label>
+            <input name="data-picker" type="radio" class="data-picker__input" id="death" value="death">
+            <label class="data-picker__lable" for="data-picker">New Deaths per Million</label>
+        </div>
+        
+    </section>
     <section class="charts">
         <div class="charts__map">
             <svg id="map-chart"></svg>

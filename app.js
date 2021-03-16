@@ -22,7 +22,7 @@ d3.queue()
                             .range(['white', 'red'])
 
         let clrScaleDeath = d3.scaleLinear()
-                            .domain([0,30])
+                            .domain([0,100])
                             .range(['white', 'blue'])                    
         
         let geoData = topojson.feature(mapData, mapData.objects.countries).features;
@@ -57,7 +57,7 @@ d3.queue()
                     if (d.properties.casesPerMil === undefined) {
                         console.log(d); 
                         return 'grey';}
-                    return clrScaleCase(d.properties.casesPerMil)})
+                    return clrScaleDeath(d.properties.deathsPerMil)})
                 
 
 
