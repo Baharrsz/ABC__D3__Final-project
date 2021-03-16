@@ -1,13 +1,21 @@
 d3.queue()
-    .defer(d3.csv, 'data/covid-data.csv', formatter)
+    .defer(d3.csv, 'data/covid-data.csv', cvdDataFormatter)
+    .defer(d3.csv, 'data/countries_codes_and_coordinates.csv', codeDataFormatter)
     .defer(d3.json, 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
-    .await((error, covidData, mapData) => {
+    .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
-        let months = getMonths(covidData);
-        console.log("month data", months);
+        let allMonthsData = getMonths(covidData);
+        console.log("All months", allMonthsData);
 
-        let monthData = months["2021-03"];
+        let monthData = allMonthsData["2021-03"];
+        monthData.forEach(location => {
+            let found = countryCodes.find(country => country.alphaCode === location.isoCode);
+            if (found) {
+                location.numericCode = found.numericCode}
+        })
+
+        console.log('monthData', monthData)
         
         let clrScaleCase = d3.scaleLinear()
                             .domain([0,2500])
@@ -20,7 +28,7 @@ d3.queue()
         let geoData = topojson.feature(mapData, mapData.objects.countries).features;
 
         geoData.forEach(feature => {
-            let found = monthData.find(country => country.location === feature.properties.name);
+            let found = monthData.find(country => country.numericCode === feature.id);
             if (found) feature.properties = found;
         })
         console.log("geoData", geoData)
@@ -46,7 +54,9 @@ d3.queue()
             .merge(countries)
                 .attr('d', path)
                 .attr('fill', d => {
-                    if (d.properties.casesPerMil === undefined) {console.log(d); return 'grey';}
+                    if (d.properties.casesPerMil === undefined) {
+                        console.log(d); 
+                        return 'grey';}
                     return clrScaleCase(d.properties.casesPerMil)})
                 
 
@@ -57,7 +67,7 @@ d3.queue()
 
 
 
-function formatter(row, idx, headers){
+function cvdDataFormatter(row, idx, headers){
     removeList = [
         'Asia',
         'Africa',
@@ -119,4 +129,16 @@ function getMonths(data) {
 
         return monthsData;
 
+}
+
+function codeDataFormatter(row) {
+
+    let zeroNum = 3 - row['Numeric code'].length;
+    if (zeroNum === 1)row['Numeric code'] = "0" + row['Numeric code'];
+    if (zeroNum === 2)row['Numeric code'] = "00" + row['Numeric code'];
+
+    return {
+        alphaCode: row['Alpha-3 code'],
+        numericCode: row['Numeric code']
+    }
 }
