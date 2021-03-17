@@ -45,7 +45,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
             .classed('country', true)
         .merge(countries)
             .attr('d', path)
-            .on('mousemove', showMapTooltip)
+            .on('mousemove', (d) => showTooltip(d,'map'))
             .on('mousout', hideTooltip)
             .transition()
                 .duration(500)
@@ -60,15 +60,3 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         `)
 }
 
-function showMapTooltip(d) {
-    d3.select('.tooltip')
-        .style('opacity', 1)
-        .style('top', `${d3.event.y}px`)
-        .style('left', `${d3.event.x}px`)
-        .html(`
-                <p>Country: ${d.properties.name}</p>
-                <p>Population: ${d.properties.population || 'NA'}</p>
-                <p>New Cases per Million: ${(d.properties.casesPerMil) || 'NA'}</p>
-                <p>New Deaths per Million: ${(d.properties.deathsPerMil) || 'NA'}</p>
-            `);
-}

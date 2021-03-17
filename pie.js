@@ -44,5 +44,7 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
         .merge(arcs)
             .attr('d', pathGen)
             .attr('fill', d => scale(d.data.name))
+            .on('mousemove', (d) => showTooltip(d,'pie', dataToShow))
                     
 }
+

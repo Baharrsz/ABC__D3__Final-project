@@ -9,27 +9,27 @@ d3.queue()
         addNumericCode(allMonthsData, countryCodes);
 
         let months = Object.keys(allMonthsData).sort()
-        let monthPicker = d3.select('.month-picker__input');
-        let monthToShow = months[monthPicker.property('value')];
+        let monthToShow = months[0];
+        let dataToShow = 'cases';   
 
-        let dataPicker = d3.selectAll('.data-picker__input');
-        let dataToShow = dataPicker.property('value');   
-
-        monthToShow = '2021-01'
-        // drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+        drawMap(allMonthsData, mapData, monthToShow, dataToShow);
         drawPie(allMonthsData, monthToShow, dataToShow);
         
-        monthPicker
+        d3.select('.month-picker__input')
             .property('max', months.length - 1)
             .on('change', () => {
                 monthToShow = months[d3.event.target.value];
                 drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+                drawPie(allMonthsData, monthToShow, dataToShow);
+
             })
 
-        dataPicker
+         d3.selectAll('.data-picker__input')
             .on('change', () => {
                 dataToShow = d3.event.target.value;
                 drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+                drawPie(allMonthsData, monthToShow, dataToShow);
+
             })
 
     });
@@ -123,6 +123,36 @@ function addNumericCode(allMonthsData, countryCodes) {
         })
     })
 }
+
+
+function showTooltip(d, chart, dataToShow) {
+    let html;
+
+    if (chart === 'map') {
+        html = `
+                <p>${d.properties.name}</p>
+                <p>Population: ${d.properties.population || 'NA'}</p>
+                <p>New Cases per Million: ${(d.properties.casesPerMil) || 'NA'}</p>
+                <p>New Deaths per Million: ${(d.properties.deathsPerMil) || 'NA'}</p>
+            `
+        }
+
+    if (chart === 'pie') {
+        html = `
+                <p>${d.data.name}</p>
+                <p>${(d.data[dataToShow]) || 'NA'} ${dataToShow}</p>
+            `
+        }
+    
+
+
+    d3.select('.tooltip')
+        .style('opacity', 1)
+        .style('top', `${d3.event.y}px`)
+        .style('left', `${d3.event.x}px`)
+        .html(html);
+}
+
 
 
 function hideTooltip(d) {
