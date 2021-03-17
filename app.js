@@ -5,80 +5,36 @@ d3.queue()
     .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
+
         let allMonthsData = getMonths(covidData);
-        console.log("All months", allMonthsData);
+        addNumericCode(allMonthsData, countryCodes);
+
+
         let months = Object.keys(allMonthsData).sort()
 
-        let dataPicker = d3.select('.data-picker__input');
-        var selectedData = dataPicker.property('value');        
+        let dataPicker = d3.selectAll('.data-picker__input');
+        var dataToShow = dataPicker.property('value');        
 
 
         let monthPicker = d3.select('.month-picker__input');
-        var selectedMonth = monthPicker.property('value');
+        var monthToShow = months[monthPicker.property('value')];
+
+        drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+        
         monthPicker
             .property('max', months.length - 1)
             .on('change', () => {
-                selectedMonth = months[d3.event.target.value];
+                monthToShow = months[d3.event.target.value];
+                drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+            })
 
+        dataPicker
+            .on('change', () => {
+                dataToShow = d3.event.target.value;
+                drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+            })
 
-                let monthData = allMonthsData[selectedMonth];
-        monthData.forEach(location => {
-            let found = countryCodes.find(country => country.alphaCode === location.isoCode);
-            if (found) {
-                location.numericCode = found.numericCode}
-        })
-
-        console.log('monthData', monthData)
-
-        let clrScale;
-        if (selectedData === 'casesPerMil') {
-            clrScale = d3.scaleLinear()
-                            .domain([0,2500])
-                            .range(['white', 'red'])
-        } else {
-            clrScale = d3.scaleLinear()
-                            .domain([0,100])
-                            .range(['white', 'blue'])  
-        }
-        
-                
-        let geoData = topojson.feature(mapData, mapData.objects.countries).features;
-
-        geoData.forEach(feature => {
-            let found = monthData.find(country => country.numericCode === feature.id);
-            if (found) feature.properties = found;
-        })
-        console.log("geoData", geoData)
-
-        let projection = d3.geoMercator()
-                            .scale(75)
-                            .translate([250,250]);
-        let path = d3.geoPath()
-                        .projection(projection)
-
-        
-
-        let countries = d3.select('svg')
-                            .attr('width', 500)
-                            .attr('height', 500)
-                        .selectAll('.country')
-                            .data(geoData)
-
-        countries
-            .enter()
-                .append('path')
-                .classed('country', true)
-            .merge(countries)
-                .attr('d', path)
-                .attr('fill', d => {
-                    if (d.properties[selectedData] === undefined) return 'grey';
-                    return clrScale(d.properties[selectedData])})
-
-    })
-
-
-
-            });
+    });
 
 
 
@@ -169,5 +125,64 @@ function getMonths(data) {
 
         return monthsData;
 
+}
+
+function addNumericCode(allMonthsData, countryCodes) {
+    Object.keys(allMonthsData).forEach(month => {
+        allMonthsData[month].forEach(location => {
+            let found = countryCodes.find(country => country.alphaCode === location.isoCode);
+            if (found) {
+                location.numericCode = found.numericCode}
+        })
+    })
+}
+
+function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
+
+    let monthData = allMonthsData[monthToShow];
+    console.log('dataToShow', dataToShow)
+
+    let clrScale;
+        if (dataToShow === 'casesPerMil') {
+            clrScale = d3.scaleLinear()
+                            .domain([0,2500])
+                            .range(['lightgrey', '#730e0e']);
+        } else {
+            clrScale = d3.scaleLinear()
+                            .domain([0,100])
+                            .range(['lightgrey', '#0c326b']);
+        }
+        
+                
+        let geoData = topojson.feature(mapData, mapData.objects.countries).features;
+
+        geoData.forEach(feature => {
+            let found = monthData.find(country => country.numericCode === feature.id);
+            if (found) feature.properties = found;
+        })
+
+        let projection = d3.geoMercator()
+                            .scale(75)
+                            .translate([250,250]);
+        let path = d3.geoPath()
+                        .projection(projection)
+
+        
+
+        let countries = d3.select('svg')
+                            .attr('width', 500)
+                            .attr('height', 500)
+                        .selectAll('.country')
+                            .data(geoData)
+
+        countries
+            .enter()
+                .append('path')
+                .classed('country', true)
+            .merge(countries)
+                .attr('d', path)
+                .attr('fill', d => {
+                    if (d.properties[dataToShow] === undefined) return 'grey';
+                    return clrScale(d.properties[dataToShow])})
 }
 
