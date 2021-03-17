@@ -32,17 +32,6 @@ d3.queue()
 
     });
 
-
-
-
-
-
-
-
-
-
-        
-
         
 
 
@@ -91,9 +80,9 @@ function codeDataFormatter(row) {
     }
 }
 
-function getMonths(data) {
+function getMonths(covidData) {
         let monthsData = {};
-        data.forEach((row, idx) => {
+        covidData.forEach((row, idx) => {
             let month = row.date.slice(0, 7);
             if (!monthsData[month]) monthsData[month] = [];
             let foundCountry = monthsData[month].find(obj => obj.name === row.name);
@@ -134,6 +123,9 @@ function addNumericCode(allMonthsData, countryCodes) {
 }
 
 function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
+    const width = 650;
+    const height = 400;
+    const projectionScale = 100;
 
     let monthData = allMonthsData[monthToShow];
 
@@ -158,16 +150,16 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
     console.log('geoData', geoData)
 
     let projection = d3.geoMercator()
-                        .scale(75)
-                        .translate([250,250]);
+                        .scale(projectionScale)
+                        .translate([width / 2, 0.7 * height]);
     let path = d3.geoPath()
                     .projection(projection)
 
     
 
-    let countries = d3.select('svg')
-                        .attr('width', 500)
-                        .attr('height', 500)
+    let countries = d3.select('.map__chart')
+                        .attr('width', width)
+                        .attr('height', height)
                     .selectAll('.country')
                         .data(geoData)
 
@@ -182,6 +174,12 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
                 return clrScale(d.properties[dataToShow])})
             .on('mousemove', showTooltip)
             .on('mousout', hideTooltip)
+
+    d3.select('.map__title')
+        .html(`
+            <span>${(dataToShow === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
+            <span>${monthToShow}</span>
+        `)
 }
 
 function showTooltip(d) {
