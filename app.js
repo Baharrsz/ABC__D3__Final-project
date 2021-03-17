@@ -189,9 +189,9 @@ function showTooltip(d) {
         .style('left', `${d3.event.x}px`)
         .html(`
                 <p>Country: ${d.properties.name}</p>
-                <p>Population:${d.properties.population || 'NA'}</p>
-                <p>New Cases per Million: ${d.properties.casesPerMil || 'NA'}</p>
-                <p>New Deaths per Million: ${d.properties.deathsPerMil || 'NA'}</p>
+                <p>Population: ${d.properties.population || 'NA'}</p>
+                <p>New Cases per Million: ${(d.properties.casesPerMil) || 'NA'}</p>
+                <p>New Deaths per Million: ${(d.properties.deathsPerMil) || 'NA'}</p>
             `);
 }
 

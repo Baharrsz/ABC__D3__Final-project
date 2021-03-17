@@ -9,14 +9,15 @@ svg {
 .tooltip {
   opacity: 0;
   position: absolute;
+
   pointer-events: none;
+
   background-color: white;
   padding: 5px;
   border-radius: 3px;
-}
 
-.tooltip p {
-  margin: 0;
-  font-size: xx-small;
+  p {
+    margin: 0;
+    font-size: xx-small;
+  }
 }
-/*# sourceMappingURL=styles.css.map */
