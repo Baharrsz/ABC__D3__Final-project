@@ -62,7 +62,7 @@ function cvdDataFormatter(row, idx, headers){
     if (removeList.indexOf(row.location) > -1) return;
 
     return {
-        location: row.location,
+        name: row.location,
         isoCode: row.iso_code,
         continent: row.continent,
         date: row.date,
@@ -96,10 +96,10 @@ function getMonths(data) {
         data.forEach((row, idx) => {
             let month = row.date.slice(0, 7);
             if (!monthsData[month]) monthsData[month] = [];
-            let foundCountry = monthsData[month].find(obj => obj.location === row.location);
+            let foundCountry = monthsData[month].find(obj => obj.name === row.name);
             if (!foundCountry) {
                 let countryObj = {
-                    location: row.location,
+                    name: row.name,
                     isoCode: row.isoCode,
                     continent: row.continent,
                     cases: row.cases,
@@ -125,10 +125,10 @@ function getMonths(data) {
 
 function addNumericCode(allMonthsData, countryCodes) {
     Object.keys(allMonthsData).forEach(month => {
-        allMonthsData[month].forEach(location => {
-            let found = countryCodes.find(country => country.alphaCode === location.isoCode);
+        allMonthsData[month].forEach(country => {
+            let found = countryCodes.find(ctry => ctry.alphaCode === country.isoCode);
             if (found) {
-                location.numericCode = found.numericCode}
+                country.numericCode = found.numericCode}
         })
     })
 }
@@ -155,6 +155,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         let found = monthData.find(country => country.numericCode === feature.id);
         if (found) feature.properties = found;
     })
+    console.log('geoData', geoData)
 
     let projection = d3.geoMercator()
                         .scale(75)
@@ -179,5 +180,24 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
             .attr('fill', d => {
                 if (d.properties[dataToShow] === undefined) return 'grey';
                 return clrScale(d.properties[dataToShow])})
+            .on('mousemove', showTooltip)
+            .on('mousout', hideTooltip)
 }
 
+function showTooltip(d) {
+    d3.select('.tooltip')
+        .style('opacity', 1)
+        .style('top', `${d3.event.y}px`)
+        .style('left', `${d3.event.x}px`)
+        .html(`
+                <p>Country: ${d.properties.name}</p>
+                <p>Population:${d.properties.population || 'NA'}</p>
+                <p>New Cases per Million: ${d.properties.casesPerMil || 'NA'}</p>
+                <p>New Deaths per Million: ${d.properties.deathsPerMil || 'NA'}</p>
+            `);
+}
+
+function hideTooltip(d) {
+    d3.select('.tooltip')
+        .style('opacity', 0);
+}

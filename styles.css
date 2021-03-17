@@ -5,3 +5,8 @@ body {
 svg {
   border: solid black 1px;
 }
+
+.tooltip {
+  opacity: 0;
+  position: absolute;
+}
