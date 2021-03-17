@@ -147,7 +147,6 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         let found = monthData.find(country => country.numericCode === feature.id);
         if (found) feature.properties = found;
     })
-    console.log('geoData', geoData)
 
     let projection = d3.geoMercator()
                         .scale(projectionScale)
@@ -169,11 +168,13 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
             .classed('country', true)
         .merge(countries)
             .attr('d', path)
-            .attr('fill', d => {
-                if (d.properties[dataToShow] === undefined) return 'grey';
-                return clrScale(d.properties[dataToShow])})
             .on('mousemove', showTooltip)
             .on('mousout', hideTooltip)
+            .transition()
+                .duration(500)
+                .attr('fill', d => {
+                if (d.properties[dataToShow] === undefined) return 'grey';
+                return clrScale(d.properties[dataToShow])})
 
     d3.select('.map__title')
         .html(`
