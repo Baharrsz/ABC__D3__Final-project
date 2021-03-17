@@ -10,13 +10,14 @@ d3.queue()
 
         let months = Object.keys(allMonthsData).sort()
         let monthPicker = d3.select('.month-picker__input');
-        var monthToShow = months[monthPicker.property('value')];
+        let monthToShow = months[monthPicker.property('value')];
 
         let dataPicker = d3.selectAll('.data-picker__input');
-        var dataToShow = dataPicker.property('value');        
-        
-        drawMap(allMonthsData, mapData, monthToShow, dataToShow);
-        // drawPie(allMonthsData, monthToShow, dataToShow);
+        let dataToShow = dataPicker.property('value');   
+
+        monthToShow = '2021-01'
+        // drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+        drawPie(allMonthsData, monthToShow, dataToShow);
         
         monthPicker
             .property('max', months.length - 1)
