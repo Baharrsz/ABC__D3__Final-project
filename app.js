@@ -5,20 +5,16 @@ d3.queue()
     .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
-
         let allMonthsData = getMonths(covidData);
         addNumericCode(allMonthsData, countryCodes);
 
-
         let months = Object.keys(allMonthsData).sort()
-
-        let dataPicker = d3.selectAll('.data-picker__input');
-        var dataToShow = dataPicker.property('value');        
-
-
         let monthPicker = d3.select('.month-picker__input');
         var monthToShow = months[monthPicker.property('value')];
 
+        let dataPicker = d3.selectAll('.data-picker__input');
+        var dataToShow = dataPicker.property('value');        
+        
         drawMap(allMonthsData, mapData, monthToShow, dataToShow);
         
         monthPicker
@@ -140,7 +136,6 @@ function addNumericCode(allMonthsData, countryCodes) {
 function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
 
     let monthData = allMonthsData[monthToShow];
-    console.log('dataToShow', dataToShow)
 
     let clrScale;
         if (dataToShow === 'casesPerMil') {
@@ -154,35 +149,35 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         }
         
                 
-        let geoData = topojson.feature(mapData, mapData.objects.countries).features;
+    let geoData = topojson.feature(mapData, mapData.objects.countries).features;
 
-        geoData.forEach(feature => {
-            let found = monthData.find(country => country.numericCode === feature.id);
-            if (found) feature.properties = found;
-        })
+    geoData.forEach(feature => {
+        let found = monthData.find(country => country.numericCode === feature.id);
+        if (found) feature.properties = found;
+    })
 
-        let projection = d3.geoMercator()
-                            .scale(75)
-                            .translate([250,250]);
-        let path = d3.geoPath()
-                        .projection(projection)
+    let projection = d3.geoMercator()
+                        .scale(75)
+                        .translate([250,250]);
+    let path = d3.geoPath()
+                    .projection(projection)
 
-        
+    
 
-        let countries = d3.select('svg')
-                            .attr('width', 500)
-                            .attr('height', 500)
-                        .selectAll('.country')
-                            .data(geoData)
+    let countries = d3.select('svg')
+                        .attr('width', 500)
+                        .attr('height', 500)
+                    .selectAll('.country')
+                        .data(geoData)
 
-        countries
-            .enter()
-                .append('path')
-                .classed('country', true)
-            .merge(countries)
-                .attr('d', path)
-                .attr('fill', d => {
-                    if (d.properties[dataToShow] === undefined) return 'grey';
-                    return clrScale(d.properties[dataToShow])})
+    countries
+        .enter()
+            .append('path')
+            .classed('country', true)
+        .merge(countries)
+            .attr('d', path)
+            .attr('fill', d => {
+                if (d.properties[dataToShow] === undefined) return 'grey';
+                return clrScale(d.properties[dataToShow])})
 }
 
