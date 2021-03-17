@@ -4,13 +4,14 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
     const projectionScale = 100;
 
     let monthData = allMonthsData[monthToShow];
+    dataToShow = (dataToShow === 'cases')? 'casesPerMil': 'deathsPerMil';
 
     let clrScale;
         if (dataToShow === 'casesPerMil') {
             clrScale = d3.scaleLinear()
                             .domain([0,2500])
                             .range(['lightgrey', '#730e0e']);
-        } else {
+        } else if (dataToShow === 'deathsPerMil'){
             clrScale = d3.scaleLinear()
                             .domain([0,100])
                             .range(['lightgrey', '#0c326b']);

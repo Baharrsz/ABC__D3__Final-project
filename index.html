@@ -14,17 +14,21 @@
             <input name="month-picker" type="range" class="month-picker__input" step=1 min=0 value=0>
         </div>
         <div class="data-picker">
-            <input name="data-picker" type="radio" class="data-picker__input" id="case" value="casesPerMil" checked>
+            <input name="data-picker" type="radio" class="data-picker__input" id="case" value="cases" checked>
             <label class="data-picker__lable" for="data-picker">New Cases per Million</label>
-            <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deathsPerMil">
+            <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deaths">
             <label class="data-picker__lable" for="data-picker">New Deaths per Million</label>
         </div>
         
     </section>
     <section class="charts">
-        <div class="charts__map">
+        <div class="charts__map map">
             <p class="map__title"></p>
             <svg class="map__chart"></svg>
+        </div>
+        <div class="charts__pie pie">
+            <p class="pie__title"></p>
+            <svg class="pie__chart"></svg>
         </div>
     </section>
 
@@ -34,6 +38,7 @@
     <script src="https://d3js.org/d3.v4.js"></script>
     <script src="https://unpkg.com/topojson@3"></script>
     <script src="map.js"></script>
+    <script src="pie.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

@@ -16,6 +16,7 @@ d3.queue()
         var dataToShow = dataPicker.property('value');        
         
         drawMap(allMonthsData, mapData, monthToShow, dataToShow);
+        // drawPie(allMonthsData, monthToShow, dataToShow);
         
         monthPicker
             .property('max', months.length - 1)
@@ -121,9 +122,6 @@ function addNumericCode(allMonthsData, countryCodes) {
         })
     })
 }
-
-
-
 
 
 function hideTooltip(d) {
