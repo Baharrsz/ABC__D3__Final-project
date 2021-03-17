@@ -45,6 +45,13 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
             .attr('d', pathGen)
             .attr('fill', d => scale(d.data.name))
             .on('mousemove', (d) => showTooltip(d,'pie', dataToShow))
+
+
+    d3.select('.pie__title')
+        .html(`
+            <span>${(dataToShow === 'cases')? 'New Cases of Covid' : 'New Deaths'}, </span>
+            <span>${monthToShow}</span>
+        `)
                     
 }
 
