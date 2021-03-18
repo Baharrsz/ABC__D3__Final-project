@@ -4,8 +4,6 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
     const padding = 50;
 
     let monthData = allMonthsData[monthToShow];
-    console.log('monthData', monthData)
-
 
     d3.select('.pie__chart')
             .attr('width', width)
@@ -20,21 +18,18 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
                     .range(d3.schemeCategory10);
 
 
-
-
     let pieGen = d3.pie()
                         .value(d => d[dataToShow])
                         .sort((a, b) => {
                             if (a.continent < b.continent) return -1;
                             if (a.continent > b.continent) return 1;
                         });
-
     let arcsArr = pieGen(monthData)
-    console.log('arcsArr', arcsArr)
 
     let pathGen = d3.arc()
                         .outerRadius((width - padding) / 2)
                         .innerRadius(0);
+                        
 
     let arcs = d3.select('.pie-chart')
                 .selectAll('.arc')

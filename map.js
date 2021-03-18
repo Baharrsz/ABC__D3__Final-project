@@ -47,6 +47,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
             .attr('d', path)
             .on('mousemove', (d) => showTooltip(d,'map'))
             .on('mouseout', hideTooltip)
+            .on('click', drawHistogram)
             .transition()
                 .duration(500)
                 .attr('fill', d => {
