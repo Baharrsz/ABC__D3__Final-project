@@ -9,14 +9,19 @@ svg {
 .tooltip {
   opacity: 0;
   position: absolute;
+  margin: 0;
+  padding: 5px;
   pointer-events: none;
   background-color: white;
-  padding: 5px;
   border-radius: 3px;
 }
 
 .tooltip p {
   margin: 0;
   font-size: xx-small;
+}
+
+.country, .arc {
+  cursor: none;
 }
 /*# sourceMappingURL=styles.css.map */

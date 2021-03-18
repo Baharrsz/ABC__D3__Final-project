@@ -16,11 +16,18 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
 
 
     let scale = d3.scaleOrdinal()
-                    .domain(monthData.map(country => country.name))
+                    .domain(monthData.map(country => country.continent))
                     .range(d3.schemeCategory10);
 
+
+
+
     let pieGen = d3.pie()
-                        .value(d => d[dataToShow]);
+                        .value(d => d[dataToShow])
+                        .sort((a, b) => {
+                            if (a.continent < b.continent) return -1;
+                            if (a.continent > b.continent) return 1;
+                        });
 
     let arcsArr = pieGen(monthData)
     console.log('arcsArr', arcsArr)
@@ -43,8 +50,10 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
             .classed('arc', true)
         .merge(arcs)
             .attr('d', pathGen)
-            .attr('fill', d => scale(d.data.name))
+            .attr('fill', d => scale(d.data.continent))
             .on('mousemove', (d) => showTooltip(d,'pie', dataToShow))
+            .on('mouseout', hideTooltip)
+
 
 
     d3.select('.pie__title')

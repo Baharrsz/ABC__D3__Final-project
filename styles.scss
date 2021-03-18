@@ -6,24 +6,30 @@ svg {
   border: solid black 1px;
 }
 
-.charts {
-  // display: flex;
-  // flex-direction: row;
-  // flex-wrap: wrap;
-}
+// .charts {
+//   // display: flex;
+//   // flex-direction: row;
+//   // flex-wrap: wrap;
+// }
 
 .tooltip {
   opacity: 0;
   position: absolute;
+  margin: 0;
+  padding: 5px;
+  
 
   pointer-events: none;
 
   background-color: white;
-  padding: 5px;
   border-radius: 3px;
 
   p {
     margin: 0;
     font-size: xx-small;
   }
+}
+
+.country, .arc {
+  cursor: none;
 }

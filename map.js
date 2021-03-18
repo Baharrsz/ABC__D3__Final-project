@@ -46,7 +46,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         .merge(countries)
             .attr('d', path)
             .on('mousemove', (d) => showTooltip(d,'map'))
-            .on('mousout', hideTooltip)
+            .on('mouseout', hideTooltip)
             .transition()
                 .duration(500)
                 .attr('fill', d => {
