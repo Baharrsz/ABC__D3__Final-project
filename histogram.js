@@ -3,8 +3,6 @@ function drawHistogram(data, countryId, dataType) {
     const height = 500;
     const padding = 50;
 
-    //If the function is called from drawMap, dataType has changed to cases/deaths PerMil
-    if (dataType.indexOf('PerMil') > 0) dataType = dataType.slice(0,dataType.indexOf('PerMil'))
 
     
     data = Object.keys(data).sort().map(month => {
@@ -49,14 +47,18 @@ function drawHistogram(data, countryId, dataType) {
         .enter()
         .append('rect')
             .classed('histogram__bin', true)
-            .attr('y', height - padding)
-            .attr('height', 0)
         .merge(rects)
             .attr('x', (d, idx) => xScale(idx))
             .attr('width', (width - 2 * padding) / (monthNames.length - 1))
         .transition()
-            .duration(400)
-            .delay((d,idx) => idx * 200)
+            .duration(200)
+            .delay((d,idx) => idx * 100)
+            .ease(d3.easeSin)
+            .attr('y', height - padding)
+            .attr('height', 0)
+        .transition()
+            .duration(200)
+            .delay((d,idx) => idx * 100)
             .ease(d3.easeSin)
             .attr('y', d => yScale(d[dataType]))
             .attr('height', d => height - padding - yScale(d[dataType]))

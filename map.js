@@ -53,7 +53,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType) {
                     .classed('active', false);
                 d3.select(d3.event.target).classed('active', true);
 
-                drawHistogram(allMonthsData, d.id, dataType)
+                drawHistogram(allMonthsData, d.id, dataType.slice(0,dataType.indexOf('PerMil')))
             })
             .transition()
                 .duration(500)
