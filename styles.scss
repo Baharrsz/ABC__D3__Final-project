@@ -33,6 +33,11 @@ svg {
   display: none;
 }
 
+.active {
+  stroke: blue;
+  stroke-width: 1px;
+}
+
 // .country, .arc {
 //   cursor: none;
 // }

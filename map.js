@@ -1,17 +1,17 @@
-function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
+function drawMap(allMonthsData, mapData, monthToShow, dataType) {
     const width = 650;
     const height = 400;
     const projectionScale = 100;
 
     let monthData = allMonthsData[monthToShow];
-    dataToShow = (dataToShow === 'cases')? 'casesPerMil': 'deathsPerMil';
+    dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
 
     let clrScale;
-        if (dataToShow === 'casesPerMil') {
+        if (dataType === 'casesPerMil') {
             clrScale = d3.scaleLinear()
                             .domain([0,2500])
                             .range(['lightgrey', '#730e0e']);
-        } else if (dataToShow === 'deathsPerMil'){
+        } else if (dataType === 'deathsPerMil'){
             clrScale = d3.scaleLinear()
                             .domain([0,100])
                             .range(['lightgrey', '#0c326b']);
@@ -43,22 +43,27 @@ function drawMap(allMonthsData, mapData, monthToShow, dataToShow) {
         .enter()
             .append('path')
             .classed('country', true)
-        .merge(countries)
+            .attr('id', d => d.id)
             .attr('d', path)
+        .merge(countries)
             .on('mousemove', (d) => showTooltip(d,'map'))
             .on('mouseout', hideTooltip)
             .on('click', (d) => {
-                drawHistogram(allMonthsData, d.id)
+                d3.select('.active')
+                    .classed('active', false);
+                d3.select(d3.event.target).classed('active', true);
+
+                drawHistogram(allMonthsData, d.id, dataType)
             })
             .transition()
                 .duration(500)
                 .attr('fill', d => {
-                if (d.properties[dataToShow] === undefined) return 'grey';
-                return clrScale(d.properties[dataToShow])})
+                if (d.properties[dataType] === undefined) return 'grey';
+                return clrScale(d.properties[dataType])})
 
     d3.select('.map__title')
         .html(`
-            <span>${(dataToShow === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
+            <span>${(dataType === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
             <span>${monthToShow}</span>
         `)
 }

@@ -10,25 +10,30 @@ d3.queue()
 
         let months = Object.keys(allMonthsData).sort()
         let monthToShow = months[0];
-        let dataToShow = 'cases';   
+        let dataType = 'cases';   
 
-        drawMap(allMonthsData, mapData, monthToShow, dataToShow);
-        drawPie(allMonthsData, monthToShow, dataToShow);
+        drawMap(allMonthsData, mapData, monthToShow, dataType);
+        drawPie(allMonthsData, monthToShow, dataType);
         
         d3.select('.month-picker__input')
             .property('max', months.length - 1)
             .on('change', () => {
                 monthToShow = months[d3.event.target.value];
-                drawMap(allMonthsData, mapData, monthToShow, dataToShow);
-                drawPie(allMonthsData, monthToShow, dataToShow);
-
+                
+                drawMap(allMonthsData, mapData, monthToShow, dataType);
+                drawPie(allMonthsData, monthToShow, dataType);
+                
+                
             })
-
-         d3.selectAll('.data-picker__input')
+            
+            d3.selectAll('.data-picker__input')
             .on('change', () => {
-                dataToShow = d3.event.target.value;
-                drawMap(allMonthsData, mapData, monthToShow, dataToShow);
-                drawPie(allMonthsData, monthToShow, dataToShow);
+                dataType = d3.event.target.value;
+                drawMap(allMonthsData, mapData, monthToShow, dataType);
+                drawPie(allMonthsData, monthToShow, dataType);
+                
+                let activeId = d3.select('.active').attr('id');
+                if (activeId) drawHistogram(allMonthsData, activeId, dataType);
 
             })
 
@@ -125,7 +130,7 @@ function addNumericCode(allMonthsData, countryCodes) {
 }
 
 
-function showTooltip(d, chart, dataToShow) {
+function showTooltip(d, chart, dataType) {
     let html;
 
     if (chart === 'map') {
@@ -140,7 +145,7 @@ function showTooltip(d, chart, dataToShow) {
     if (chart === 'pie') {
         html = `
                 <p>${d.data.name}</p>
-                <p>${(d.data[dataToShow]) || 'NA'} ${dataToShow}</p>
+                <p>${(d.data[dataType]) || 'NA'} ${dataType}</p>
             `
         }
     
