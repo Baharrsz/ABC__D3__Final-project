@@ -1,7 +1,6 @@
 function drawPie(allMonthsData, monthToShow, dataToShow){
-    const width = 500;
-    const height = 500;
-    const padding = 50;
+    const width = 300;
+    const height = 300;
 
     let monthData = allMonthsData[monthToShow];
 
@@ -27,7 +26,7 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
     let arcsArr = pieGen(monthData)
 
     let pathGen = d3.arc()
-                        .outerRadius((width - padding) / 2)
+                        .outerRadius(width / 2)
                         .innerRadius(0);
                         
 

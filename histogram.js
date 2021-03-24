@@ -3,6 +3,9 @@ function drawHistogram(data, countryId, dataType) {
     const height = 500;
     const padding = 75;
 
+    d3.select('.no-data')
+        .remove();
+
 
     
     data = Object.keys(data).sort().map(month => {
@@ -17,6 +20,10 @@ function drawHistogram(data, countryId, dataType) {
     }).filter(data => data);
 
     console.log('dataAfter', data)
+
+
+    
+
 
     let monthNames = data.map(obj => obj.month);
 
@@ -40,6 +47,17 @@ function drawHistogram(data, countryId, dataType) {
                 .selectAll('rect')
                     .data(data);
 
+    if (data.length === 0) {
+        d3.select('.histogram__chart')
+        .append('text')
+            .classed('no-data', true)
+            .text('No Data Available for This Country')
+            .attr('transform', `translate(${height / 2}, ${height / 2})`)
+            .attr('text-anchor', 'middle')
+
+        return;
+    }
+
 
     bars
         .exit()
@@ -52,6 +70,7 @@ function drawHistogram(data, countryId, dataType) {
         .merge(bars)
             .attr('x', (d, idx) => xScale(d.month) - 0.5 * (width - 2 * padding) / (monthNames.length - 1))
             .attr('width', (width - 2 * padding) / (monthNames.length - 1))
+            .on('mousemove', d => showTooltip(d, 'histogram', dataType))
         .transition()
             .duration(200)
             .delay((d,idx) => idx * 50)

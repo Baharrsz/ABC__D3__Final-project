@@ -19,6 +19,7 @@ d3.queue()
             .property('max', months.length - 1)
             .on('change', () => {
                 monthToShow = months[d3.event.target.value];
+                d3.select('.month-picker__label').text(monthToShow)
                 
                 drawMap(allMonthsData, mapData, monthToShow, dataType);
                 drawPie(allMonthsData, monthToShow, dataType);
@@ -31,7 +32,7 @@ d3.queue()
                 dataType = d3.event.target.value;
                 drawMap(allMonthsData, mapData, monthToShow, dataType);
                 drawPie(allMonthsData, monthToShow, dataType);
-                
+
                 let activeId = d3.select('.active').attr('id');
                 if (activeId) drawHistogram(allMonthsData, activeId, dataType);
 
@@ -148,6 +149,10 @@ function showTooltip(d, chart, dataType) {
                 <p>${(d.data[dataType]) || 'NA'} ${dataType}</p>
             `
         }
+
+    if (chart === 'histogram') {
+        html = `<p>${d[dataType]} new ${dataType}</p>`
+    }
     
 
 

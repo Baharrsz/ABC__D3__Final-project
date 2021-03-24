@@ -2,8 +2,56 @@ body {
   margin: 0;
 }
 
-svg {
-  border: solid black 1px;
+.dashboard {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 15px 0;
+  background-color: #726b82;
+  color: whitesmoke;
+}
+
+.dashboard * {
+  margin: 0;
+}
+
+.dashboard__picker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.dashboard__picker {
+  margin: 10px 0;
+}
+
+.month-picker__input {
+  margin-left: 20px;
+}
+
+.month-picker__label {
+  margin-left: 20px;
+}
+
+.data-picker__label {
+  margin-left: 10px;
+}
+
+.data-picker__input {
+  margin-left: 20px;
+}
+
+.charts {
+  display: -ms-grid;
+  display: grid;
+      grid-template-areas: "map pie" "map bar";
 }
 
 .tooltip {
@@ -21,12 +69,27 @@ svg {
   font-size: xx-small;
 }
 
-.pie {
-  display: none;
+.active {
+  stroke: lightyellow;
+  stroke-width: 1px;
 }
 
-.active {
-  stroke: blue;
-  stroke-width: 1px;
+.map {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
+  -ms-grid-column: 1;
+  grid-area: map;
+}
+
+.pie {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: pie;
+}
+
+.histogram {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  grid-area: bar;
 }
 /*# sourceMappingURL=styles.css.map */

@@ -9,16 +9,20 @@
 </head>
 <body>
     <section class="dashboard">
-        <div class="month-picker">
-            <label class="month-picker__lable" for="month-picker">Pick a month</label>
+        <h1 class="dashboard__title">Covid19 Data from January 2020 to March 2021</h1>
+        <div class="dashboard__picker month-picker">
+            <h4 class="dashboard__text month-picker__text">Pick a month to display</h4>
             <input name="month-picker" type="range" class="month-picker__input" step=1 min=0 value=0>
+            <label class="month-picker__label" for="month-picker"></label>
         </div>
-        <div class="data-picker">
+        <div class="dashboard__picker data-picker">
+            <h4 class="dashboard__text data-picker__text">Select the data type</h4>
             <input name="data-picker" type="radio" class="data-picker__input" id="case" value="cases" checked>
-            <label class="data-picker__lable" for="data-picker">New Cases</label>
+            <label class="data-picker__label" for="data-picker">New Cases</label>
             <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deaths">
-            <label class="data-picker__lable" for="data-picker">New Deaths</label>
+            <label class="data-picker__label" for="data-picker">New Deaths</label>
         </div>
+        <h3 class="dashboard__text">Click on a country in the map to see monthly data.</h3>
         
     </section>
     <section class="charts">
