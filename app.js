@@ -8,12 +8,23 @@ d3.queue()
         let allMonthsData = getMonths(covidData);
         addNumericCode(allMonthsData, countryCodes);
 
-        let months = Object.keys(allMonthsData).sort()
+        let months = Object.keys(allMonthsData).sort();
         let monthToShow = months[0];
-        let dataType = 'cases';   
+        let dataType = 'cases';
+        
+        const {width: sWidth, height: sHeight} = window.screen;
+        const sizes = {
+            map: {width: sWidth * 0.5, height: sHeight * 0.5},
+            pie: {width:sWidth * 0.5, height: sHeight * 0.25},
+            histogram: {width:sWidth * 0.4, height: sHeight * 0.4, padding: sWidth * 0.05}
+        }
 
-        drawMap(allMonthsData, mapData, monthToShow, dataType);
-        drawPie(allMonthsData, monthToShow, dataType);
+        setChart('map', sizes);
+        setChart('pie', sizes);
+        setChart('histogram', sizes);
+
+        drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+        drawPie(allMonthsData, monthToShow, dataType, sizes);
         
         d3.select('.month-picker__input')
             .property('max', months.length - 1)
@@ -21,23 +32,21 @@ d3.queue()
                 monthToShow = months[d3.event.target.value];
                 d3.select('.month-picker__label').text(monthToShow)
                 
-                drawMap(allMonthsData, mapData, monthToShow, dataType);
-                drawPie(allMonthsData, monthToShow, dataType);
-                
-                
-            })
+                drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+                drawPie(allMonthsData, monthToShow, dataType, sizes);   
+            });
             
             d3.selectAll('.data-picker__input')
             .on('change', () => {
                 dataType = d3.event.target.value;
-                drawMap(allMonthsData, mapData, monthToShow, dataType);
-                drawPie(allMonthsData, monthToShow, dataType);
+                drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+                drawPie(allMonthsData, monthToShow, dataType, sizes);
 
-                let activeId = d3.select('.active').attr('id');
-                if (activeId) drawHistogram(allMonthsData, activeId, dataType);
-
+                let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');
+                
+                if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes);
+                
             })
-
     });
 
         
@@ -55,7 +64,7 @@ function cvdDataFormatter(row, idx, headers){
         'Oceania',
         'South America',
         'World',
-    ]
+    ];
     if (removeList.indexOf(row.location) > -1) return;
 
     return {
@@ -72,8 +81,7 @@ function cvdDataFormatter(row, idx, headers){
         population: +row.population,
         medianAge: +row.median_age,
         devIndex: +row.human_development_index
-    }
-    
+    };
 }
 
 function codeDataFormatter(row) {
@@ -85,38 +93,38 @@ function codeDataFormatter(row) {
     return {
         alphaCode: row['Alpha-3 code'],
         numericCode: row['Numeric code']
-    }
+    };
 }
 
 function getMonths(covidData) {
-        let monthsData = {};
-        covidData.forEach((row, idx) => {
-            let month = row.date.slice(0, 7);
-            if (!monthsData[month]) monthsData[month] = [];
-            let foundCountry = monthsData[month].find(obj => obj.name === row.name);
-            if (!foundCountry) {
-                let countryObj = {
-                    name: row.name,
-                    isoCode: row.isoCode,
-                    continent: row.continent,
-                    cases: row.cases,
-                    casesPerMil: row.casesPerMil,
-                    deaths: row.deaths,
-                    deathsPerMil: row.deathsPerMil,
-                    population: row.population,
-                    medianAge: row.medianAge,
-                    devIndex: row.devIndex
-                }
-                monthsData[month].push(countryObj)
-            } else {
-                foundCountry.cases += row.cases;
-                foundCountry.casesPerMil += row.casesPerMil;
-                foundCountry.deaths += row.deaths;
-                foundCountry.deathsPerMil += row.deathsPerMil;
+    let monthsData = {};
+    covidData.forEach((row, idx) => {
+        let month = row.date.slice(0, 7);
+        if (!monthsData[month]) monthsData[month] = [];
+        let foundCountry = monthsData[month].find(obj => obj.name === row.name);
+        if (!foundCountry) {
+            let countryObj = {
+                name: row.name,
+                isoCode: row.isoCode,
+                continent: row.continent,
+                cases: row.cases,
+                casesPerMil: row.casesPerMil,
+                deaths: row.deaths,
+                deathsPerMil: row.deathsPerMil,
+                population: row.population,
+                medianAge: row.medianAge,
+                devIndex: row.devIndex
             }
-        })
+            monthsData[month].push(countryObj)
+        } else {
+            foundCountry.cases += row.cases;
+            foundCountry.casesPerMil += row.casesPerMil;
+            foundCountry.deaths += row.deaths;
+            foundCountry.deathsPerMil += row.deathsPerMil;
+        }
+    });
 
-        return monthsData;
+    return monthsData;
 
 }
 
@@ -127,7 +135,7 @@ function addNumericCode(allMonthsData, countryCodes) {
             if (found) {
                 country.numericCode = found.numericCode}
         })
-    })
+    });
 }
 
 
@@ -135,26 +143,29 @@ function showTooltip(d, chart, dataType) {
     let html;
 
     if (chart === 'map') {
+        let population = (isNaN(d.properties.population))? 'NA': d3.format(',')(d.properties.population);
+        let cases = (isNaN(d.properties.casesPerMil))? 'NA': d.properties.casesPerMil.toFixed(2);
+        let deaths = (isNaN(d.properties.deathsPerMil))? 'NA': d.properties.deathsPerMil.toFixed(2);
         html = `
                 <p>${d.properties.name}</p>
-                <p>Population: ${d.properties.population || 'NA'}</p>
-                <p>New Cases per Million: ${(d.properties.casesPerMil) || 'NA'}</p>
-                <p>New Deaths per Million: ${(d.properties.deathsPerMil) || 'NA'}</p>
+                <p>Population: ${population}</p>
+                <p>New Cases per Million: ${cases}</p>
+                <p>New Deaths per Million: ${deaths}</p>
             `
         }
 
     if (chart === 'pie') {
+        let data = (isNaN(d.data[dataType]))? 'NA': d3.format(',')(d.data[dataType]);
         html = `
                 <p>${d.data.name}</p>
-                <p>${(d.data[dataType]) || 'NA'} ${dataType}</p>
+                <p>${data} ${dataType}</p>
             `
-        }
+    };
 
     if (chart === 'histogram') {
-        html = `<p>${d[dataType]} new ${dataType}</p>`
-    }
+        html = `<p>${d3.format(',')(d[dataType])} new ${dataType}</p>`
+    };
     
-
 
     d3.select('.tooltip')
         .style('opacity', 1)
@@ -168,4 +179,13 @@ function showTooltip(d, chart, dataType) {
 function hideTooltip(d) {
     d3.select('.tooltip')
         .style('opacity', 0);
+}
+
+function setChart(chart, sizes) {
+    let {width, height} = sizes[chart];
+
+    d3.select(`.${chart}__chart`)
+        .attr('width', width)
+        .attr('height', height);
+
 }

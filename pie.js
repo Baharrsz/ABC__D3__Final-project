@@ -1,12 +1,15 @@
-function drawPie(allMonthsData, monthToShow, dataToShow){
-    const width = 300;
-    const height = 300;
+function drawPie(allMonthsData, monthToShow, dataToShow, sizes){
+    const {width, height} = sizes.pie;
+
+    d3.select('.pie__title')
+    .html(`
+        <span>${(dataToShow === 'cases')? 'New Cases of Covid' : 'New Deaths'}, </span>
+        <span>${monthToShow}</span>
+    `)
 
     let monthData = allMonthsData[monthToShow];
 
     d3.select('.pie__chart')
-            .attr('width', width)
-            .attr('height', height)
         .append('g')
             .classed('pie-chart', true)
             .attr('transform', `translate(${width / 2}, ${height / 2})`);
@@ -26,7 +29,7 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
     let arcsArr = pieGen(monthData)
 
     let pathGen = d3.arc()
-                        .outerRadius(width / 2)
+                        .outerRadius(height / 2)
                         .innerRadius(0);
                         
 
@@ -47,14 +50,6 @@ function drawPie(allMonthsData, monthToShow, dataToShow){
             .attr('fill', d => scale(d.data.continent))
             .on('mousemove', (d) => showTooltip(d,'pie', dataToShow))
             .on('mouseout', hideTooltip)
-
-
-
-    d3.select('.pie__title')
-        .html(`
-            <span>${(dataToShow === 'cases')? 'New Cases of Covid' : 'New Deaths'}, </span>
-            <span>${monthToShow}</span>
-        `)
                     
 }
 

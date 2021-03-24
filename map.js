@@ -1,25 +1,21 @@
-function drawMap(allMonthsData, mapData, monthToShow, dataType) {
-    const width = 650;
-    const height = 400;
-    const projectionScale = 100;
+function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
+    const {width, height} = sizes.map;
+    const projectionScale = width / 7;
 
     let monthData = allMonthsData[monthToShow];
+    
     dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
 
-    let clrScale;
-        if (dataType === 'casesPerMil') {
-            clrScale = d3.scaleLinear()
-                            .domain([0,2500])
-                            .range(['lightgrey', '#730e0e']);
-        } else if (dataType === 'deathsPerMil'){
-            clrScale = d3.scaleLinear()
-                            .domain([0,100])
-                            .range(['lightgrey', '#0c326b']);
-        }
-        
+    d3.select('.map__title')
+    .html(`
+        <span>${(dataType === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
+        <span>${monthToShow}</span>
+    `)
+
+    let clrScale = setScale(dataType);
+
                 
     let geoData = topojson.feature(mapData, mapData.objects.countries).features;
-
     geoData.forEach(feature => {
         let found = monthData.find(country => country.numericCode === feature.id);
         if (found) feature.properties = found;
@@ -34,8 +30,6 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType) {
     
 
     let countries = d3.select('.map__chart')
-                        .attr('width', width)
-                        .attr('height', height)
                     .selectAll('.country')
                         .data(geoData)
 
@@ -53,7 +47,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType) {
                     .classed('active', false);
                 d3.select(d3.event.target).classed('active', true);
 
-                drawHistogram(allMonthsData, d.id, dataType.slice(0,dataType.indexOf('PerMil')))
+                drawHistogram(allMonthsData, d.id, dataType.slice(0,dataType.indexOf('PerMil')), sizes)
             })
             .transition()
                 .duration(500)
@@ -61,10 +55,20 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType) {
                 if (d.properties[dataType] === undefined) return 'grey';
                 return clrScale(d.properties[dataType])})
 
-    d3.select('.map__title')
-        .html(`
-            <span>${(dataType === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
-            <span>${monthToShow}</span>
-        `)
+
+}
+
+function setScale(dataType) {
+    let clrScale;
+    if (dataType === 'casesPerMil') {
+        clrScale = d3.scaleLinear()
+                        .domain([0,2500])
+                        .range(['lightgrey', '#730e0e']);
+    } else if (dataType === 'deathsPerMil'){
+        clrScale = d3.scaleLinear()
+                        .domain([0,100])
+                        .range(['lightgrey', '#0c326b']);
+    }
+    return clrScale;
 }
 

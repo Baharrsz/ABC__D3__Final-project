@@ -52,12 +52,36 @@ body {
   display: -ms-grid;
   display: grid;
       grid-template-areas: "map pie" "map bar";
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.charts div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.charts__title {
+  font-size: x-large;
+}
+
+.charts__title--histogram {
+  margin-top: 0;
 }
 
 .tooltip {
   opacity: 0;
   position: absolute;
-  margin: 10px;
+  margin: 5px;
   padding: 5px;
   pointer-events: none;
   background-color: white;
@@ -67,11 +91,6 @@ body {
 .tooltip p {
   margin: 0;
   font-size: xx-small;
-}
-
-.active {
-  stroke: lightyellow;
-  stroke-width: 1px;
 }
 
 .map {
@@ -91,5 +110,15 @@ body {
   -ms-grid-row: 2;
   -ms-grid-column: 2;
   grid-area: bar;
+}
+
+.active {
+  stroke: lightyellow;
+  stroke-width: 1px;
+}
+
+.no-display {
+  position: absolute;
+  top: 80%;
 }
 /*# sourceMappingURL=styles.css.map */
