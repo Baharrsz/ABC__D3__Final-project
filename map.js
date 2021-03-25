@@ -52,7 +52,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
             .transition()
                 .duration(500)
                 .attr('fill', d => {
-                if (d.properties[dataType] === undefined) return 'grey';
+                if (d.properties[dataType] === undefined) return 'gray';
                 return clrScale(d.properties[dataType])})
 
 
@@ -62,12 +62,12 @@ function setScale(dataType) {
     let clrScale;
     if (dataType === 'casesPerMil') {
         clrScale = d3.scaleLinear()
-                        .domain([0,2500])
-                        .range(['lightgrey', '#730e0e']);
+                        .domain([0,100, 2500, 50000])
+                        .range(['white', '#fcd703', '#730e0e', 'black']);
     } else if (dataType === 'deathsPerMil'){
         clrScale = d3.scaleLinear()
-                        .domain([0,100])
-                        .range(['lightgrey', '#0c326b']);
+                        .domain([0, 50, 100, 500])
+                        .range(['white', '#1454de', '#580878', 'black']);
     }
     return clrScale;
 }
