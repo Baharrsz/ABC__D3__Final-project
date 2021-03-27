@@ -106,7 +106,7 @@ function drawAxes(data, dataType, monthNames, sizes) {
     d3.select('.histogram__chart')
         .append('g')
             .classed('axis y-axis', true)
-            .attr('transform', `translate(${3* padding / 4}, 0)`)
+            .attr('transform', `translate(${padding / 2}, 0)`)
             .call(yAxis)
 
     return {xScale, yScale};

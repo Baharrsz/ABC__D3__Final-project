@@ -15,13 +15,13 @@ d3.queue()
         const {width: sWidth, height: sHeight} = window.screen;
         const sizes = {
             map: {width: sWidth * 0.5, height: sHeight * 0.5},
-            pie: {width:sWidth * 0.5, height: sHeight * 0.25},
-            histogram: {width:sWidth * 0.4, height: sHeight * 0.4, padding: sWidth * 0.05}
+            pie: {width:sWidth * 0.5, height: sHeight * 0.3, radHeightRatio: 0.5},
+            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.03}
         }
 
-        setChart('map', sizes);
-        setChart('pie', sizes);
-        setChart('histogram', sizes);
+        setChart('map', sizes, dataType, monthToShow);
+        setChart('pie', sizes, dataType, monthToShow);
+        setChart('histogram', sizes, dataType);
 
         drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
         drawPie(allMonthsData, monthToShow, dataType, sizes);
@@ -181,11 +181,20 @@ function hideTooltip(d) {
         .style('opacity', 0);
 }
 
-function setChart(chart, sizes) {
-    let {width, height} = sizes[chart];
+function setChart(chartType, sizes, dataType, monthToShow) {
+    let {width, height} = sizes[chartType];
 
-    d3.select(`.${chart}__chart`)
+    d3.select(`.${chartType}__chart`)
         .attr('width', width)
         .attr('height', height);
+
+
+    d3.select(`.${chartType}__chart`)
+            .append('g')
+                .classed(`${chartType}__main`, true)
+    
+    if (chartType === 'map') createMapLegend(width, height, dataType);
+    if (chartType === 'pie') createPieLegend(sizes.pie);
+
 
 }
