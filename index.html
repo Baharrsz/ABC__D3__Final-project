@@ -8,38 +8,46 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <section class="dashboard">
-        <h1 class="dashboard__title">Covid19 Data from January 2020 to March 2021</h1>
-        <div class="dashboard__picker month-picker">
-            <h4 class="dashboard__text month-picker__text">Pick a month to display</h4>
-            <input name="month-picker" type="range" class="month-picker__input" step=1 min=0 value=0>
-            <label class="month-picker__label" for="month-picker"></label>
-        </div>
-        <div class="dashboard__picker data-picker">
-            <h4 class="dashboard__text data-picker__text">Select the data type</h4>
-            <input name="data-picker" type="radio" class="data-picker__input" id="case" value="cases" checked>
-            <label class="data-picker__label" for="data-picker">New Cases</label>
-            <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deaths">
-            <label class="data-picker__label" for="data-picker">New Deaths</label>
-        </div>
-        <h3 class="dashboard__text">Click on a country in the map to see monthly data.</h3>
-        
-    </section>
-    <section class="charts">
-        <div class="charts__map map">
-            <p class="map__title charts__title"></p>
-            <svg class="map__chart"></svg>
-        </div>
-        <div class="charts__pie pie">
-            <p class="pie__title charts__title"></p>
-            <svg class="pie__chart"></svg>
-        </div>
-        <div class="charts__histogram histogram">
-            <svg class="histogram__chart"></svg>
-            <p class="histogram__title charts__title charts__title--histogram no-display">Click on a country in the map to see monthly data</p>
-        </div>
-    </section>
+    <main class="main">
+        <section class="dashboard">
+            <h1 class="dashboard__title">Covid19 Data from January 2020 to March 2021</h1>
+            <div class="dashboard__picker month-picker">
+                <h4 class="dashboard__text month-picker__text">Pick a month to display</h4>
+                <input name="month-picker" type="range" class="month-picker__input" step=1 min=0 value=0>
+                <label class="month-picker__label" for="month-picker"></label>
+                <h4 class="dashboard__text month-picker__text"> Or click on 'Play' to review all months</h4>
+                <button class="month-picker__btn btn play">Play</button>
+            </div>
+            <div class="dashboard__picker data-picker">
+                <h4 class="dashboard__text data-picker__text">Select the data type</h4>
+                <input name="data-picker" type="radio" class="data-picker__input" id="case" value="cases" checked>
+                <label class="data-picker__label" for="data-picker">New Cases</label>
+                <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deaths">
+                <label class="data-picker__label" for="data-picker">New Deaths</label>
+            </div>
+            <h3 class="dashboard__text">Click on a country in the map to see monthly data.</h3>
 
+        </section>
+        <section class="charts">
+            <div class="charts__map map">
+                <p class="map__title charts__title"></p>
+                <svg class="map__chart"></svg>
+            </div>
+            <div class="charts__pie pie">
+                <p class="pie__title charts__title"></p>
+                <svg class="pie__chart"></svg>
+            </div>
+            <div class="charts__histogram histogram">
+                <svg class="histogram__chart"></svg>
+                <p class="histogram__title charts__title charts__title--histogram no-display">Click on a country in the map to
+                    see monthly data</p>
+            </div>
+        </section>
+        <div class="acknowledgement">Data provided by
+            <a href="https://ourworldindata.org/coronavirus-source-data" target="_blank">Our World in Data</a>
+        </div>
+    </main>
+ 
     <div class="tooltip"></div>
 
 

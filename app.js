@@ -5,7 +5,7 @@ d3.queue()
     .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
-        let allMonthsData = getMonths(covidData);
+        let allMonthsData = getMonthsData(covidData);
         addNumericCode(allMonthsData, countryCodes);
 
         let months = Object.keys(allMonthsData).sort();
@@ -36,17 +36,26 @@ d3.queue()
                 drawPie(allMonthsData, monthToShow, dataType, sizes);   
             });
             
-            d3.selectAll('.data-picker__input')
-            .on('change', () => {
-                dataType = d3.event.target.value;
-                drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
-                drawPie(allMonthsData, monthToShow, dataType, sizes);
+        d3.selectAll('.data-picker__input')
+        .on('change', () => {
+            dataType = d3.event.target.value;
+            drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+            drawPie(allMonthsData, monthToShow, dataType, sizes);
 
-                let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');
-                
-                if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes);
-                
-            })
+            let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');
+            
+            if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes);
+            
+        });
+
+        let animation;
+        d3.select('.month-picker__btn')
+            .on('click', () => {
+                if (d3.event.target.className.indexOf('play') >= 0) {
+                    animation = playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation)
+                } else stopPlay(animation);
+            });
+
     });
 
         
@@ -96,7 +105,7 @@ function codeDataFormatter(row) {
     };
 }
 
-function getMonths(covidData) {
+function getMonthsData(covidData) {
     let monthsData = {};
     covidData.forEach((row, idx) => {
         let month = row.date.slice(0, 7);
@@ -166,11 +175,10 @@ function showTooltip(d, chart, dataType) {
         html = `<p>${d3.format(',')(d[dataType])} new ${dataType}</p>`
     };
     
-
     d3.select('.tooltip')
         .style('opacity', 1)
-        .style('top', `${d3.event.y}px`)
-        .style('left', `${d3.event.x}px`)
+        .style('top', `${d3.event.pageY}px`)
+        .style('left', `${d3.event.pageX}px`)
         .html(html);
 }
 
@@ -192,9 +200,62 @@ function setChart(chartType, sizes, dataType, monthToShow) {
     d3.select(`.${chartType}__chart`)
             .append('g')
                 .classed(`${chartType}__main`, true)
+
     
-    if (chartType === 'map') createMapLegend(width, height, dataType);
-    if (chartType === 'pie') createPieLegend(sizes.pie);
+    if (chartType === 'map') createMapLegend(sizes.map, dataType);
+    if (chartType === 'pie') {
+        d3.select('.pie__main')
+            .attr('transform', `translate(${width / 2}, ${height / 2})`);
+
+        createPieLegend(sizes.pie);
+    }
 
 
+}
+
+function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {
+
+    toggle('play');
+
+    let pickerBar = d3.select('.month-picker__input');
+    let monthLabel = d3.select('.month-picker__label');
+
+    let i = +pickerBar.property('value') + 1;
+
+    animation = setInterval(() => {
+        if (i === months.length) {
+            stopPlay(animation);
+        } else {
+            let monthToShow = months[i];
+            pickerBar.property('value', i);
+            monthLabel.text(monthToShow);
+
+            drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+            drawPie(allMonthsData, monthToShow, dataType, sizes);
+            i++;
+        }
+    }, 1000);
+    return animation;
+};
+
+function stopPlay(animation) {
+    toggle('pause');
+    clearInterval(animation);
+}
+
+function toggle(mode){
+    if (mode === 'play') {
+        var other ='pause';
+        var disable = true;
+    } else {
+        var other ='play';
+        var disable = false;
+    }
+    
+    d3.select('.month-picker__btn')
+        .classed(mode, false)
+        .classed(other, true);
+
+    d3.selectAll('.data-picker *').property('disabled', disable);
+    d3.select('.month-picker__input').property('disabled', disable);
 }

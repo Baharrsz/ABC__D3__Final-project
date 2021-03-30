@@ -1,21 +1,13 @@
 function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
     const {width, height} = sizes.map;
     const projectionScale = width / 7;
+    const monthData = allMonthsData[monthToShow];
 
-    let monthData = allMonthsData[monthToShow];
+    createMapTitle(dataType, monthToShow);
 
     resetMap(dataType);
 
     dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
-
-    d3.select('.map__title')
-    .html(`
-        <span>${(dataType === 'casesPerMil')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
-        <span>${monthToShow}</span>
-    `)
-
-    let clrScale = setMapScale(dataType);
-
                 
     let geoData = topojson.feature(mapData, mapData.objects.countries).features;
     geoData.forEach(feature => {
@@ -29,12 +21,11 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
     let path = d3.geoPath()
                     .projection(projection)
 
-    
+
 
     let countries = d3.select('.map__main')
                         .selectAll('.country')
-                            .data(geoData)
-
+                            .data(geoData);
     countries
         .enter()
             .append('path')
@@ -55,9 +46,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
                 .duration(500)
                 .attr('fill', d => {
                 if (d.properties[dataType] === undefined) return 'gray';
-                return clrScale(d.properties[dataType])})
-
-
+                return setMapScale(dataType)(d.properties[dataType])});
 }
 
 function setMapScale(dataType) {
@@ -75,11 +64,12 @@ function setMapScale(dataType) {
         clrScale = d3.scaleLinear()
                         .domain(deathsStops)
                         .range(deathsColours);
-    } else console.log('setMapScale: Invalid dataType')
+    } else console.log('setMapScale: Invalid dataType');
     return clrScale;
 }
 
-function createMapLegend(width, height, dataType){
+function createMapLegend(mapSizes, dataType){
+    const {width, height} = mapSizes;
     const casesColours = setMapScale('cases').range();
     const deathsColours = setMapScale('deaths').range();
 
@@ -155,4 +145,13 @@ function resetMap(dataType) {
         .call(axis)
 
 }
+
+function createMapTitle(dataType, monthToShow) {
+        d3.select('.map__title')
+    .html(`
+        <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
+        <span class="title__month">${monthToShow}</span>
+    `);
+}
+
 

@@ -1,20 +1,8 @@
 function drawPie(allMonthsData, monthToShow, dataType, sizes){
     const {width, height, radHeightRatio} = sizes.pie;
+    const monthData = allMonthsData[monthToShow];
 
-    d3.select('.pie__title')
-    .html(`
-        <span>${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} Worldwide, </span>
-        <span>${monthToShow}</span>
-    `)
-
-    let monthData = allMonthsData[monthToShow];
-
-    d3.select('.pie__main')
-            .attr('transform', `translate(${width / 2}, ${height / 2})`);
-
-
-    let scale = setPieScale(monthData);
-
+    createMapTitle(dataType, monthToShow);
 
     let pieGen = d3.pie()
                         .value(d => d[dataType])
@@ -22,16 +10,15 @@ function drawPie(allMonthsData, monthToShow, dataType, sizes){
                             if (a.continent < b.continent) return -1;
                             if (a.continent > b.continent) return 1;
                         });
-    let arcsArr = pieGen(monthData)
-
-    let pathGen = d3.arc()
-                        .outerRadius(radHeightRatio * height)
-                        .innerRadius(0);
-                        
+    let arcsArr = pieGen(monthData);
 
     let arcs = d3.select('.pie__main')
                 .selectAll('.arc')
-                    .data(arcsArr)
+                    .data(arcsArr);
+
+    let pathGen = d3.arc()
+                        .outerRadius(radHeightRatio * height)
+                        .innerRadius(0);                       
 
     arcs
         .exit()
@@ -43,7 +30,9 @@ function drawPie(allMonthsData, monthToShow, dataType, sizes){
             .classed('arc', true)
         .merge(arcs)
             .attr('d', pathGen)
-            .attr('fill', d => scale(d.data.continent))
+            .attr('fill', d => setPieScale(monthData)(d.data.continent))
+            .style('stroke', 'white')
+            .style('stroke-width', 0.1)
             .on('mousemove', (d) => showTooltip(d,'pie', dataType))
             .on('mouseout', hideTooltip)
                     
@@ -78,7 +67,6 @@ function createPieLegend(pieSizes){
         continent: continent,
         colour: setPieScale()(continent)
     }))
-    console.log(scale)
 
 
     let legend = d3.select('.pie__chart')
@@ -120,3 +108,10 @@ function createPieLegend(pieSizes){
             .style('font-size', '12px')
 }
 
+function createMapTitle(dataType, monthToShow) {
+        d3.select('.pie__title')
+    .html(`
+        <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} Worldwide, </span>
+        <span class="title__month">${monthToShow}</span>
+    `);
+}
