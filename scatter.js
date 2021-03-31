@@ -12,19 +12,12 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
 
     drawScatterAxes(xScale, yScale, sizes.scatter);
 
-    
-
-    console.log(yScale.domain(), yScale.range(), yScale(15.1))
-
-
-
     let circles = d3.select('.scatter__main')
                     .selectAll('circle')
                         .data(monthData, d => d.name);
     circles
         .exit()
         .remove()
-
 
     circles
         .enter()
@@ -42,7 +35,6 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
             .attr('r', d => rScale(d.vaccines))
             .attr('cx', d => xScale(d[dataType]))
             .attr('cy', d => yScale(d.medianAge))
-
 
 }
 
@@ -71,7 +63,7 @@ function setScatterScale(allMonthsData, key, scope, min) {
 }
 
 function drawScatterAxes(xScale, yScale, sizes) {
-    const {width, height, padding} = sizes;
+    const {height, padding} = sizes;
 
     d3.select('.scatter__chart')
         .selectAll('.axis')
@@ -93,12 +85,3 @@ function drawScatterAxes(xScale, yScale, sizes) {
             .call(yAxis);            
 
 }
-
-// function setScatterChart(xScale, yScale, sizes) {
-
-//     d3.select('.scatter__chart')
-//                         .append('g')
-//                             .classed('scatter__circles', true);
-
-
-// }

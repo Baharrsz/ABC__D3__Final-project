@@ -34,7 +34,7 @@ d3.queue()
             .property('max', months.length - 1)
             .on('change', () => {
                 monthToShow = months[d3.event.target.value];
-                d3.select('.month-picker__label').text(monthToShow)
+                d3.select('.month-picker__label').text(monthToShow);
                 
                 drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
                 drawPie(allMonthsData, monthToShow, dataType, sizes);
@@ -49,11 +49,8 @@ d3.queue()
             drawPie(allMonthsData, monthToShow, dataType, sizes);
             drawScatter(allMonthsData,monthToShow, dataType, sizes);
 
-
-            let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');
-            
-            if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes);
-            
+            let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');            
+            if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes); 
         });
 
         let animation;
@@ -235,10 +232,6 @@ function setChart(chartType, sizes, dataType, monthToShow) {
     }
 }
 
-
-
-
-
 function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {
 
     toggle('play');
@@ -258,6 +251,7 @@ function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animatio
 
             drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
             drawPie(allMonthsData, monthToShow, dataType, sizes);
+            drawScatter(allMonthsData, monthToShow, dataType, sizes);
             i++;
         }
     }, 1000);
