@@ -139,6 +139,10 @@ main {
   font-size: xx-small;
 }
 
+.tooltip__name {
+  font-weight: bold;
+}
+
 .map {
   -ms-grid-row: 1;
   -ms-grid-row-span: 2;

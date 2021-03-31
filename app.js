@@ -17,17 +17,18 @@ d3.queue()
         const sizes = {
             map: {width: sWidth * 0.5, height: sHeight * 0.5},
             pie: {width:sWidth * 0.5, height: sHeight * 0.3, radHeightRatio: 0.5},
-            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.03},
-            scatter: {width: sWidth * 0.5, height: sHeight * 0.5}
+            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.04},
+            scatter: {width: sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.04}
         }
 
         setChart('map', sizes, dataType, monthToShow);
         setChart('pie', sizes, dataType, monthToShow);
         setChart('histogram', sizes, dataType);
-        setChart('scatter', sizes, monthToShow)
+        setChart('scatter', sizes, monthToShow);
 
         drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
         drawPie(allMonthsData, monthToShow, dataType, sizes);
+        drawScatter(allMonthsData,monthToShow, dataType, sizes);
         
         d3.select('.month-picker__input')
             .property('max', months.length - 1)
@@ -36,7 +37,9 @@ d3.queue()
                 d3.select('.month-picker__label').text(monthToShow)
                 
                 drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
-                drawPie(allMonthsData, monthToShow, dataType, sizes);   
+                drawPie(allMonthsData, monthToShow, dataType, sizes);
+                drawScatter(allMonthsData,monthToShow, dataType, sizes);
+
             });
             
         d3.selectAll('.data-picker__input')
@@ -44,6 +47,8 @@ d3.queue()
             dataType = d3.event.target.value;
             drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
             drawPie(allMonthsData, monthToShow, dataType, sizes);
+            drawScatter(allMonthsData,monthToShow, dataType, sizes);
+
 
             let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');
             
@@ -93,7 +98,7 @@ function covidDataFormatter(row, idx, headers){
         population: +row.population,
         medianAge: +row.median_age,
         devIndex: +row.human_development_index,
-        newVaccines: +row.new_vaccinations
+        vaccines: +row.total_vaccinations_per_hundred
     };
 }
 
@@ -127,7 +132,7 @@ function getMonthsData(covidData) {
                 population: row.population,
                 medianAge: row.medianAge,
                 devIndex: row.devIndex,
-                newVaccines: row.newVaccines
+                vaccines: row.vaccines
 
             }
             monthsData[month].push(countryObj)
@@ -160,11 +165,13 @@ function showTooltip(d, chart, dataType) {
         let population = (isNaN(d.properties.population))? 'NA': d3.format(',')(d.properties.population);
         let cases = (isNaN(d.properties.casesPerMil))? 'NA': d.properties.casesPerMil.toFixed(2);
         let deaths = (isNaN(d.properties.deathsPerMil))? 'NA': d.properties.deathsPerMil.toFixed(2);
+        let vaccines = (isNaN(d.properties.vaccines))? 'NA': d3.format(',')(d.properties.vaccines);
         html = `
-                <p>${d.properties.name}</p>
+                <p class="tooltip__name>${d.properties.name}</p>
                 <p>Population: ${population}</p>
                 <p>New Cases per Million: ${cases}</p>
                 <p>New Deaths per Million: ${deaths}</p>
+                <p>New vaccines per Hundred: ${vaccines}</p>
             `
         }
 
@@ -179,6 +186,20 @@ function showTooltip(d, chart, dataType) {
     if (chart === 'histogram') {
         html = `<p>${d3.format(',')(d[dataType])} new ${dataType}</p>`
     };
+
+    if (chart === 'scatter') {
+        let population = (isNaN(d.population))? 'NA': (d.population / 1e6).toFixed(2);
+        let dataPerMil = (isNaN(d[dataType]))? 'NA': d[dataType].toFixed(2);
+        let dataText = (dataType === 'casesPerMil')? 'Cases Per Million' : 'Deaths Per Million'
+        let vaccines = (isNaN(d.vaccines))? 'NA': d3.format(',')(d.vaccines);
+        html = `
+                <p class="tooltip__name">${d.name} </p>
+                <p>Population: ${population} Million</p>
+                <p>New ${dataText}: ${dataPerMil}</p>
+                <p>New vaccines per hundred: ${vaccines}</p>
+                <p>Median Age: ${d.medianAge}</p>
+                <p>Development Index: ${d.devIndex}</p>
+            `    };
     
     d3.select('.tooltip')
         .style('opacity', 1)
@@ -212,9 +233,11 @@ function setChart(chartType, sizes, dataType, monthToShow) {
 
         createPieLegend(sizes.pie);
     }
-
-
 }
+
+
+
+
 
 function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {
 

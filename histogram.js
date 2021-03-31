@@ -3,11 +3,11 @@ function drawHistogram(data, countryId, dataType, sizes) {
 
      data = formatHistogramData(data, countryId);
 
-    setHistogram(dataType, sizes);
+    setHistogramChart(dataType, sizes);
 
     let monthNames = data.map(obj => obj.month);
 
-    let {xScale, yScale} = drawAxes(data, dataType, monthNames, sizes);
+    let {xScale, yScale} = drawHistAxes(data, dataType, monthNames, sizes);
 
     if (data.length === 0) {
         d3.selectAll('.histogram__bar')
@@ -74,7 +74,7 @@ function formatHistogramData(data, countryId){
     }).filter(data => data);
 }
 
-function drawAxes(data, dataType, monthNames, sizes) {
+function drawHistAxes(data, dataType, monthNames, sizes) {
     const {width, height, padding} = sizes.histogram;
 
     let xScale = d3.scalePoint()
@@ -112,7 +112,7 @@ function drawAxes(data, dataType, monthNames, sizes) {
     return {xScale, yScale};
 }
 
-function setHistogram(dataType, sizes) {
+function setHistogramChart(dataType, sizes) {
     const {width, height, padding} = sizes.histogram;
 
     d3.select('.histogram__title')

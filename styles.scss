@@ -120,6 +120,10 @@ main {
     margin: 0;
     font-size: xx-small;
   }
+
+  &__name {
+    font-weight: bold;
+  }
 }
 
 .map {
