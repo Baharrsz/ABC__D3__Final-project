@@ -124,12 +124,15 @@ main {
 
 .map {
   grid-area: map;
+  display: none !important;
 }
 .pie {
   grid-area: pie;
+  display: none !important;
 }
 .histogram {
   grid-area: bar;
+  display: none !important;
 }
 
 .country {

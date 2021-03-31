@@ -144,18 +144,21 @@ main {
   -ms-grid-row-span: 2;
   -ms-grid-column: 1;
   grid-area: map;
+  display: none !important;
 }
 
 .pie {
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: pie;
+  display: none !important;
 }
 
 .histogram {
   -ms-grid-row: 2;
   -ms-grid-column: 2;
   grid-area: bar;
+  display: none !important;
 }
 
 .country {

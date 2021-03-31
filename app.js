@@ -1,5 +1,5 @@
 d3.queue()
-    .defer(d3.csv, 'data/covid-data.csv', cvdDataFormatter)
+    .defer(d3.csv, 'data/covid-data.csv', covidDataFormatter)
     .defer(d3.csv, 'data/countries_codes_and_coordinates.csv', codeDataFormatter)
     .defer(d3.json, 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
     .await((error, covidData, countryCodes, mapData) => {
@@ -7,6 +7,7 @@ d3.queue()
 
         let allMonthsData = getMonthsData(covidData);
         addNumericCode(allMonthsData, countryCodes);
+        console.log(allMonthsData);
 
         let months = Object.keys(allMonthsData).sort();
         let monthToShow = months[0];
@@ -16,12 +17,14 @@ d3.queue()
         const sizes = {
             map: {width: sWidth * 0.5, height: sHeight * 0.5},
             pie: {width:sWidth * 0.5, height: sHeight * 0.3, radHeightRatio: 0.5},
-            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.03}
+            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.03},
+            scatter: {width: sWidth * 0.5, height: sHeight * 0.5}
         }
 
         setChart('map', sizes, dataType, monthToShow);
         setChart('pie', sizes, dataType, monthToShow);
         setChart('histogram', sizes, dataType);
+        setChart('scatter', sizes, monthToShow)
 
         drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
         drawPie(allMonthsData, monthToShow, dataType, sizes);
@@ -62,7 +65,7 @@ d3.queue()
 
 
 
-function cvdDataFormatter(row, idx, headers){
+function covidDataFormatter(row, idx, headers){
     removeList = [
         'Asia',
         'Africa',
@@ -89,7 +92,8 @@ function cvdDataFormatter(row, idx, headers){
         totalDeaths: +row.total_deaths,
         population: +row.population,
         medianAge: +row.median_age,
-        devIndex: +row.human_development_index
+        devIndex: +row.human_development_index,
+        newVaccines: +row.new_vaccinations
     };
 }
 
@@ -122,7 +126,9 @@ function getMonthsData(covidData) {
                 deathsPerMil: row.deathsPerMil,
                 population: row.population,
                 medianAge: row.medianAge,
-                devIndex: row.devIndex
+                devIndex: row.devIndex,
+                newVaccines: row.newVaccines
+
             }
             monthsData[month].push(countryObj)
         } else {
