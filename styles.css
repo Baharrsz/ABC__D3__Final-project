@@ -66,6 +66,24 @@ main {
 
 .month-picker__btn {
   margin-left: 15px;
+  width: 2vw;
+  height: 2vw;
+  border: none;
+  border-radius: 3px;
+}
+
+.month-picker__btn:focus {
+  outline: none;
+}
+
+.month-picker .play {
+  background-image: url(/assets/play.svg);
+  background-position: center;
+}
+
+.month-picker .pause {
+  background-image: url(/assets/pause.svg);
+  background-position: center;
 }
 
 .data-picker__label {

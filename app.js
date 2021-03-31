@@ -147,7 +147,6 @@ function addNumericCode(allMonthsData, countryCodes) {
     });
 }
 
-
 function showTooltip(d, chart, dataType) {
     let html;
 
@@ -181,8 +180,6 @@ function showTooltip(d, chart, dataType) {
         .style('left', `${d3.event.pageX}px`)
         .html(html);
 }
-
-
 
 function hideTooltip(d) {
     d3.select('.tooltip')

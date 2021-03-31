@@ -52,6 +52,24 @@ main {
 
   &__btn {
     margin-left: 15px;
+    width: 2vw;
+    height: 2vw;
+    border: none;
+    border-radius: 3px;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .play {
+    background-image: url(/assets/play.svg);
+    background-position: center;
+  }
+
+  .pause {
+    background-image: url(/assets/pause.svg);
+    background-position: center;
   }
 }
 
