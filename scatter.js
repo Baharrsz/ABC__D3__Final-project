@@ -1,6 +1,7 @@
 function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
-    const {width, height, padding} = sizes.scatter;
     const monthData = allMonthsData[monthToShow];
+
+    setChartTitle('scatter', dataType, monthToShow);
 
     dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
 
@@ -17,7 +18,7 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
                         .data(monthData, d => d.name);
     circles
         .exit()
-        .remove()
+        .remove();
 
     circles
         .enter()
@@ -34,7 +35,7 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
             .duration(1000)
             .attr('r', d => rScale(d.vaccines))
             .attr('cx', d => xScale(d[dataType]))
-            .attr('cy', d => yScale(d.medianAge))
+            .attr('cy', d => yScale(d.medianAge));
 
 }
 
@@ -60,7 +61,7 @@ function setScatterScale(allMonthsData, scatterSizes, dimension, key, min) {
         allMonthsData[month].forEach(country => {
             if (country[key] > max) max = country[key];
         })
-    });
+    })
 
     if (min === undefined) {
         min = Infinity;
@@ -70,7 +71,7 @@ function setScatterScale(allMonthsData, scatterSizes, dimension, key, min) {
                 if (country[key] < min) min = country[key];
             })
         })
-    };
+    }
 
     return d3.scaleLinear()
                     .domain([min, max])
@@ -78,8 +79,8 @@ function setScatterScale(allMonthsData, scatterSizes, dimension, key, min) {
 
 }
 
-function drawScatterAxes(xScale, yScale, sizes) {
-    const {height, padding} = sizes;
+function drawScatterAxes(xScale, yScale, scatterSizes) {
+    const {height, padding} = scatterSizes;
 
     d3.select('.scatter__chart')
         .selectAll('.axis')

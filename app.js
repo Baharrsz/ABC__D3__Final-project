@@ -7,7 +7,6 @@ d3.queue()
 
         let allMonthsData = getMonthsData(covidData);
         addNumericCode(allMonthsData, countryCodes);
-        console.log(allMonthsData);
 
         let months = Object.keys(allMonthsData).sort();
         let monthToShow = months[0];
@@ -155,10 +154,10 @@ function addNumericCode(allMonthsData, countryCodes) {
     });
 }
 
-function showTooltip(d, chart, dataType) {
+function showTooltip(d, chartType, dataType) {
     let html;
 
-    if (chart === 'map') {
+    if (chartType === 'map') {
         let population = (isNaN(d.properties.population))? 'NA': d3.format(',')(d.properties.population);
         let cases = (isNaN(d.properties.casesPerMil))? 'NA': d.properties.casesPerMil.toFixed(2);
         let deaths = (isNaN(d.properties.deathsPerMil))? 'NA': d.properties.deathsPerMil.toFixed(2);
@@ -172,7 +171,7 @@ function showTooltip(d, chart, dataType) {
             `
         }
 
-    if (chart === 'pie') {
+    if (chartType === 'pie') {
         let data = (isNaN(d.data[dataType]))? 'NA': d3.format(',')(d.data[dataType]);
         html = `
                 <p>${d.data.name}</p>
@@ -180,11 +179,11 @@ function showTooltip(d, chart, dataType) {
             `
     };
 
-    if (chart === 'histogram') {
+    if (chartType === 'histogram') {
         html = `<p>${d3.format(',')(d[dataType])} new ${dataType}</p>`
     };
 
-    if (chart === 'scatter') {
+    if (chartType === 'scatter') {
         let population = (isNaN(d.population))? 'NA': (d.population / 1e6).toFixed(2);
         let dataPerMil = (isNaN(d[dataType]))? 'NA': d[dataType].toFixed(2);
         let dataText = (dataType === 'casesPerMil')? 'Cases Per Million' : 'Deaths Per Million'
@@ -279,4 +278,24 @@ function toggle(mode){
 
     d3.selectAll('.data-picker *').property('disabled', disable);
     d3.select('.month-picker__input').property('disabled', disable);
+}
+
+function setChartTitle(chartType, dataType, monthToShow) {
+    let titleType;
+    switch (chartType) {
+        case 'map':
+            titleType = 'per Million Population, ';
+            break;
+        case 'pie':
+            titleType = 'Worldwide, `';
+            break;
+        case 'scatter': 
+            titleType = 'vs Median Age';
+    }
+
+    d3.select(`.${chartType}__title`)
+        .html(`
+            <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} ${titleType}, </span>
+            <span class="title__month">${monthToShow}</span>
+        `);
 }
