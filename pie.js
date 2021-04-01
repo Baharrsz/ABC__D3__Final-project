@@ -2,7 +2,7 @@ function drawPie(allMonthsData, monthToShow, dataType, sizes){
     const {width, height, radHeightRatio} = sizes.pie;
     const monthData = allMonthsData[monthToShow];
 
-    createMapTitle(dataType, monthToShow);
+    setPieTitle(dataType, monthToShow);
 
     let pieGen = d3.pie()
                         .value(d => d[dataType])
@@ -108,7 +108,7 @@ function createPieLegend(pieSizes){
             .style('font-size', '12px')
 }
 
-function createMapTitle(dataType, monthToShow) {
+function setPieTitle(dataType, monthToShow) {
         d3.select('.pie__title')
     .html(`
         <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} Worldwide, </span>

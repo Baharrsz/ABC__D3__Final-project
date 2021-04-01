@@ -21,10 +21,10 @@ d3.queue()
             scatter: {width: sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.04}
         }
 
-        setChart('map', sizes, dataType, monthToShow);
-        setChart('pie', sizes, dataType, monthToShow);
-        setChart('histogram', sizes, dataType);
-        setChart('scatter', sizes, monthToShow);
+        setChart('map', dataType, allMonthsData, sizes);
+        setChart('pie', dataType, allMonthsData, sizes);
+        setChart('histogram', dataType, allMonthsData, sizes);
+        setChart('scatter', dataType, allMonthsData, sizes);
 
         drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
         drawPie(allMonthsData, monthToShow, dataType, sizes);
@@ -210,7 +210,7 @@ function hideTooltip(d) {
         .style('opacity', 0);
 }
 
-function setChart(chartType, sizes, dataType, monthToShow) {
+function setChart(chartType, dataType, allMonthsData, sizes) {
     let {width, height} = sizes[chartType];
 
     d3.select(`.${chartType}__chart`)
@@ -230,6 +230,7 @@ function setChart(chartType, sizes, dataType, monthToShow) {
 
         createPieLegend(sizes.pie);
     }
+    if (chartType === 'scatter') createScatterLegend(allMonthsData, sizes.scatter)
 }
 
 function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {

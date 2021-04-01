@@ -153,3 +153,14 @@ main {
   position: absolute;
   top: 80%;
 }
+
+.scatter {
+  &__svgs {
+    position: relative;
+  }
+  &__legend {
+    position: absolute;
+    right: 0;
+    bottom: 2%;
+  }
+}

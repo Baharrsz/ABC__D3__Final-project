@@ -180,4 +180,14 @@ main {
   position: absolute;
   top: 80%;
 }
+
+.scatter__svgs {
+  position: relative;
+}
+
+.scatter__legend {
+  position: absolute;
+  right: 0;
+  bottom: 2%;
+}
 /*# sourceMappingURL=styles.css.map */
