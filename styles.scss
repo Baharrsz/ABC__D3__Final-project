@@ -86,8 +86,8 @@ main {
 .charts {
   display: grid;
   grid-template-areas:
-    "map pie"
-    "map bar";
+    "map bar"
+    "pie scatter";
   align-items: initial;
 
   & div {
@@ -102,6 +102,47 @@ main {
     &--histogram {
       margin-top: 0;
     }
+  }
+}
+
+.map {
+  grid-area: map;
+
+  &__svgs {
+    position: relative;
+  }
+  &__legend {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+}
+.pie {
+  grid-area: pie;
+
+  &__svgs {
+    position: relative;
+  }
+
+  &__legend {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+.histogram {
+  grid-area: bar;
+}
+
+.scatter {
+  grid-area: scatter;
+  &__svgs {
+    position: relative;
+  }
+  &__legend {
+    position: absolute;
+    right: 0;
+    bottom: -1%;
   }
 }
 
@@ -126,19 +167,6 @@ main {
   }
 }
 
-.map {
-  grid-area: map;
-  display: none !important;
-}
-.pie {
-  grid-area: pie;
-  display: none !important;
-}
-.histogram {
-  grid-area: bar;
-  display: none !important;
-}
-
 .country {
   stroke: lightgray;
 }
@@ -152,15 +180,4 @@ main {
 .no-display {
   position: absolute;
   top: 80%;
-}
-
-.scatter {
-  &__svgs {
-    position: relative;
-  }
-  &__legend {
-    position: absolute;
-    right: 0;
-    bottom: 2%;
-  }
 }

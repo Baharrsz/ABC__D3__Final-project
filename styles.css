@@ -97,7 +97,7 @@ main {
 .charts {
   display: -ms-grid;
   display: grid;
-      grid-template-areas: "map pie" "map bar";
+      grid-template-areas: "map bar" "pie scatter";
   -webkit-box-align: initial;
       -ms-flex-align: initial;
           align-items: initial;
@@ -124,6 +124,60 @@ main {
   margin-top: 0;
 }
 
+.map {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: map;
+}
+
+.map__svgs {
+  position: relative;
+}
+
+.map__legend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.pie {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  grid-area: pie;
+}
+
+.pie__svgs {
+  position: relative;
+}
+
+.pie__legend {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.histogram {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: bar;
+}
+
+.scatter {
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  grid-area: scatter;
+}
+
+.scatter__svgs {
+  position: relative;
+}
+
+.scatter__legend {
+  position: absolute;
+  right: 0;
+  bottom: -1%;
+}
+
 .tooltip {
   opacity: 0;
   position: absolute;
@@ -143,28 +197,6 @@ main {
   font-weight: bold;
 }
 
-.map {
-  -ms-grid-row: 1;
-  -ms-grid-row-span: 2;
-  -ms-grid-column: 1;
-  grid-area: map;
-  display: none !important;
-}
-
-.pie {
-  -ms-grid-row: 1;
-  -ms-grid-column: 2;
-  grid-area: pie;
-  display: none !important;
-}
-
-.histogram {
-  -ms-grid-row: 2;
-  -ms-grid-column: 2;
-  grid-area: bar;
-  display: none !important;
-}
-
 .country {
   stroke: lightgray;
 }
@@ -179,15 +211,5 @@ main {
 .no-display {
   position: absolute;
   top: 80%;
-}
-
-.scatter__svgs {
-  position: relative;
-}
-
-.scatter__legend {
-  position: absolute;
-  right: 0;
-  bottom: 2%;
 }
 /*# sourceMappingURL=styles.css.map */

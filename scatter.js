@@ -106,7 +106,7 @@ function drawScatterAxes(xScale, yScale, scatterSizes) {
 function createScatterLegend(allMonthsData, scatterSizes) {
     const paddings = {
         x: 20,
-        y: 40
+        y: 30
     };
 
 
@@ -119,7 +119,7 @@ function createScatterLegend(allMonthsData, scatterSizes) {
 
     d3.select('.scatter__legend')
         .attr('width', maxX - minX + 2 * paddings.x)
-        .attr('hieght', maxY - minY + 2 * paddings.y)
+        .attr('height', maxY - minY + 2 * paddings.y)
 }
 
 function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
@@ -134,7 +134,7 @@ function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
         .append('text')
             .classed('vaccine__text', true)
             .attr('x', paddings.x)
-            .attr('y', 2.5 * paddings.y)
+            .attr('y', 2 * paddings.y)
             .attr('font-size', '0.8em')
             .text('New Vaccines per 100:');
 
@@ -148,7 +148,7 @@ function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
     vac
         .append('text')
             .attr('x', textBox.x + textBox.width + paddings.x)
-            .attr('y', 3 * paddings.y)
+            .attr('y', 2 * paddings.y + vacRadii[0] + 10)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
             .text(0)
@@ -162,7 +162,7 @@ function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
     vac
         .append('text')
             .attr('x', textBox.x+ textBox.width  + 3 * paddings.x + vacRadii[1])
-            .attr('y', 3 * paddings.y)
+            .attr('y', 2 * paddings.y + vacRadii[1] + 10)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
             .text(vacRange[1]);

@@ -2,7 +2,7 @@ function drawPie(allMonthsData, monthToShow, dataType, sizes){
     const {width, height, radHeightRatio} = sizes.pie;
     const monthData = allMonthsData[monthToShow];
 
-    setPieTitle(dataType, monthToShow);
+    setChartTitle('pie', dataType, monthToShow);
 
     let pieGen = d3.pie()
                         .value(d => d[dataType])
@@ -52,15 +52,10 @@ function setPieScale() {
 
 function createPieLegend(pieSizes){
     const scale = [],
-        {width, height, radHeightRatio} = pieSizes,
-        positions = {
-            areaWidth: 120,
-            areaHeight: height *  0.5,
-            x: width / 2 + (radHeightRatio * height) + 10,
-            y: height * 0.5,
-            paddingX: 1/8,
-            paddingY: 1 / 7,
-            circlesRad : 1 / 20
+        {width} = pieSizes,
+        dimensions = {
+            padding: width / 40 ,
+            circlesRad : width / 100
         } 
 
     setPieScale().domain().forEach(continent => scale.push({
@@ -69,19 +64,7 @@ function createPieLegend(pieSizes){
     }))
 
 
-    let legend = d3.select('.pie__chart')
-                    .append('g')
-                        .classed('pie__legend legend', true)
-
-    legend.append('rect')
-            .classed('legend__area', true)
-            .attr('x', positions.x)
-            .attr('y', positions.y)
-            .attr('width', positions.areaWidth)
-            .attr('height', positions.areaHeight)
-            .attr('stroke', 'grey')
-            .attr('rx', 5)
-            .attr('fill', 'white')
+    let legend = d3.select('.pie__legend');
 
     legend
         .selectAll('.legend__cirlce')
@@ -89,11 +72,11 @@ function createPieLegend(pieSizes){
         .enter()
         .append('circle')
             .classed('legend__circle', true)
-            .attr('r', positions.areaHeight * positions.circlesRad)
-            .attr('cx', positions.x + positions.areaWidth * positions.paddingX)
-            .attr('cy', (d, idx) => positions.y + positions.areaHeight * positions.paddingY * (1 + idx))
+            .attr('r', dimensions.circlesRad)
+            .attr('cx', dimensions.padding)
+            .attr('cy', (d, idx) => dimensions.padding * (1 + idx))
             .attr('fill', d => d.colour)
-            .attr('text', d => d.continent)
+            .attr('text', d => d.continent);
 
     legend
         .selectAll('.legend__text')
@@ -102,16 +85,14 @@ function createPieLegend(pieSizes){
         .append('text')
             .classed('legend__text', true)
             .text(d => d.continent)
-            .attr('x', positions.x + positions.areaWidth * positions.paddingX * 2)
-            .attr('y', (d, idx) => positions.y + positions.areaHeight * positions.paddingY * (1 + idx))
+            .attr('x', dimensions.padding * 2)
+            .attr('y', (d, idx) => dimensions.padding * (1 + idx))
             .attr('alignment-baseline', 'middle')
-            .style('font-size', '12px')
-}
+            .style('font-size', '0.8em');
 
-function setPieTitle(dataType, monthToShow) {
-        d3.select('.pie__title')
-    .html(`
-        <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} Worldwide, </span>
-        <span class="title__month">${monthToShow}</span>
-    `);
+    let {y, width: w, height: h} = d3.select('.legend__text:last-child').node().getBBox();
+    legend
+        .attr('width', w + 3 * dimensions.padding + dimensions.circlesRad)
+        .attr('height', y + h + dimensions.padding)
+
 }

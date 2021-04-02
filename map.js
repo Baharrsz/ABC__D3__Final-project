@@ -3,7 +3,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
     const projectionScale = width / 7;
     const monthData = allMonthsData[monthToShow];
 
-    createMapTitle(dataType, monthToShow);
+    setChartTitle('map', dataType, monthToShow);
 
     resetMap(dataType);
 
@@ -69,11 +69,16 @@ function setMapScale(dataType) {
 }
 
 function createMapLegend(mapSizes, dataType){
-    const {width, height} = mapSizes;
-    const casesColours = setMapScale('cases').range();
-    const deathsColours = setMapScale('deaths').range();
-
-    d3.select('.map__chart').append('defs')
+    const {width} = mapSizes,
+        dimensions = {
+            padding: 20,
+            barWidth: 1/5 * width,
+            barHeight: 1/50 * width
+        },
+        casesColours = setMapScale('cases').range(),
+        deathsColours = setMapScale('deaths').range();
+ 
+    d3.select('.map__legend').append('defs')
             .html(`
                 <linearGradient id="cases-grad" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%"   stop-color="${casesColours[0]}"/>
@@ -88,42 +93,24 @@ function createMapLegend(mapSizes, dataType){
                     <stop offset="100%" stop-color="${deathsColours[3]}"/>
                 </linearGradient>
                 `)
-    const positions = {
-        areaWidth: 1 * width /4,
-        areaHeight: height / 7,
-        x: width / 20,
-        y: 4 * height / 5,
-        barWidth: 8/10,
-        barHeight: 1/4
-    } 
-    let legend = d3.select('.map__chart')
-                    .append('g')
-                        .classed('map__legend legend', true)
 
-    legend.append('rect')
-            .classed('legend__area', true)
-            .attr('x', positions.x)
-            .attr('y', positions.y)
-            .attr('width', positions.areaWidth)
-            .attr('height', positions.areaHeight)
-            .attr('stroke', 'grey')
-            .attr('rx', 5)
-            .attr('fill', 'white')
 
+    let legend = d3.select('.map__legend');
     legend.append('rect')
             .classed('legend__bar', true)
-            .attr('x', positions.x)
-            .attr('y', positions.y)
-            .attr('width', positions.areaWidth * positions.barWidth)
-            .attr('height', positions.areaHeight * positions.barHeight)
-            .attr('transform', `translate(${positions.areaWidth * (1 - positions.barWidth) / 2}, ${positions.areaHeight * (1 - positions.barHeight) / 3})`)
-            .attr('fill', `url('#${dataType}-grad')`)
-
-
+            .attr('x', dimensions.padding)
+            .attr('y', 0)
+            .attr('width', dimensions.barWidth)
+            .attr('height', dimensions.barHeight)
+            .attr('fill', `url('#${dataType}-grad')`);
     legend
         .append('g')
             .classed('legend__axis', true)
-            .attr('transform', `translate(${positions.areaWidth * (1 - positions.barWidth) / 2}, ${positions.y + positions.areaHeight * 0.5})`)
+            .attr('transform', `translate(0, ${dimensions.barHeight})`);
+
+    legend
+        .attr('width', dimensions.barWidth + 2 * dimensions.padding)
+        .attr('height', dimensions.barHeight + 2 * dimensions.padding)
 
 }
 
@@ -144,14 +131,6 @@ function resetMap(dataType) {
     d3.select('.legend__axis')
         .call(axis)
 
-}
-
-function createMapTitle(dataType, monthToShow) {
-        d3.select('.map__title')
-    .html(`
-        <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} per Million Population, </span>
-        <span class="title__month">${monthToShow}</span>
-    `);
 }
 
 
