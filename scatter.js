@@ -11,7 +11,7 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
     const rScale = setScatterScale(allMonthsData, sizes.scatter, 'r', 'vaccines', 0);
     const fScale = setScatterScale(allMonthsData, sizes.scatter, 'f', 'devIndex');
 
-    drawScatterAxes(xScale, yScale, sizes.scatter);
+    drawScatterAxes(xScale, yScale, sizes.scatter, dataType);
 
     let circles = d3.select('.scatter__main')
                     .selectAll('circle')
@@ -79,34 +79,54 @@ function setScatterScale(allMonthsData, scatterSizes, dimension, key, min) {
 
 }
 
-function drawScatterAxes(xScale, yScale, scatterSizes) {
+function drawScatterAxes(xScale, yScale, scatterSizes, dataType) {
     const {height, padding} = scatterSizes;
 
     d3.select('.scatter__chart')
         .selectAll('.axis')
-        .remove()
+        .remove();
 
-
-    const xAxis = d3.axisBottom(xScale);
+    //x-Axis: Create and Call Axis
+    const xAxis = d3.axisBottom(xScale)
+                        .tickFormat(d3.format(".2s"));
     d3.select('.scatter__chart')
         .append('g')
-            .classed('axis x-axis', true)
+            .classed('scatter__axis scatter__axis--x axis axis--x', true)
             .attr('transform', `translate(0, ${height - padding / 2})`)
             .call(xAxis);
 
+    //x-Axis: Label        
+    d3.select('.scatter__axis--x')
+        .append('text')
+            .classed('axis__label', true)
+            .attr('x', '50%')
+            .attr('y', padding / 2)
+            .text(`New ${dataType.slice(0,5)}`); 
+
+    //y-Axis: Create and Call Axis
     const yAxis = d3.axisLeft(yScale);
     d3.select('.scatter__chart')
         .append('g')
-            .classed('axis y-axis', true)
+            .classed('scatter__axis scatter__axis--y axis axis--y', true)
             .attr('transform', `translate(${padding / 2}, 0)`)
-            .call(yAxis);            
+            .call(yAxis);  
+    
+    //y-Axis: Lebel
+    d3.select('.scatter__axis--y')
+        .append('text')
+            .classed('axis__label', true)
+            .attr('x', '-50%')
+            .attr('y', - padding / 3)
+            .attr('transform', 'rotate(-90)')
+            .attr('text-anchor', 'middle')
+            .text('Median Age');            
 
 }
 
 function createScatterLegend(allMonthsData, scatterSizes) {
     const paddings = {
         x: 20,
-        y: 30
+        y: 35
     };
 
 
@@ -118,8 +138,8 @@ function createScatterLegend(allMonthsData, scatterSizes) {
     let maxY = Math.max(vacExtremities.maxY, devExtremities.maxY);
 
     d3.select('.scatter__legend')
-        .attr('width', maxX - minX + 2 * paddings.x)
-        .attr('height', maxY - minY + 2 * paddings.y)
+        .attr('width', maxX - minX)
+        .attr('height', maxY - minY + paddings.y);
 }
 
 function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
@@ -133,36 +153,36 @@ function scatterLegendVac(allMonthsData, scatterSizes, paddings) {
     vac
         .append('text')
             .classed('vaccine__text', true)
-            .attr('x', paddings.x)
+            .attr('x', 0)
             .attr('y', 2 * paddings.y)
-            .attr('font-size', '0.8em')
             .text('New Vaccines per 100:');
 
     let textBox = vac.node().getBBox();
     vac
         .append('circle')
             .attr('cx', textBox.x + textBox.width + paddings.x)
-            .attr('cy', 2 * paddings.y)
+            .attr('cy', textBox.y + textBox.height / 2)
             .attr('r', vacRadii[0])
-            .attr('fill', 'grey')
+            .attr('fill', 'grey');
+
     vac
         .append('text')
             .attr('x', textBox.x + textBox.width + paddings.x)
-            .attr('y', 2 * paddings.y + vacRadii[0] + 10)
+            .attr('y', textBox.y + textBox.height / 2 + vacRadii[0] + 10)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
-            .text(0)
+            .text(0);
 
     vac
         .append('circle')
             .attr('cx', textBox.x+ textBox.width  + 3 * paddings.x + vacRadii[1])
-            .attr('cy', 2 * paddings.y)
+            .attr('cy', textBox.y + textBox.height / 2)
             .attr('r', vacRadii[1])
             .attr('fill', 'grey')
     vac
         .append('text')
             .attr('x', textBox.x+ textBox.width  + 3 * paddings.x + vacRadii[1])
-            .attr('y', 2 * paddings.y + vacRadii[1] + 10)
+            .attr('y', textBox.y + textBox.height / 2 + vacRadii[1] + 10)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
             .text(vacRange[1]);
@@ -190,16 +210,15 @@ function scatterLegendDev(allMonthsData, scatterSizes, paddings) {
                 </linearGradient>
                 `);
 
-
     let dev = d3.select('.scatter__legend')
                 .append('g')
                     .classed('legend__devIdx devIdx', true);
     dev
         .append('text')
             .classed('devIdx__text', true)
-            .attr('x', paddings.x)
+            .attr('x', 0)
             .attr('y', paddings.y)
-            .attr('font-size', '0.8em')
+            .attr('alignment-baseline', 'hanging')
             .text('Development Index:');
 
     let textBox = d3.select('.vaccine__text').node().getBBox();
@@ -207,8 +226,8 @@ function scatterLegendDev(allMonthsData, scatterSizes, paddings) {
         .append('rect')
             .classed('devIdx__bar', true)
             .attr('x', textBox.x + textBox.width + paddings.x)
-            .attr('y', paddings.y / 2)
-            .attr('width', textBox.width)
+            .attr('y', textBox.y + textBox.height / 2 - paddings.y)
+            .attr('width', textBox.width * 0.7)
             .attr('height', textBox.height)
             .attr('fill', 'url(#dev-grad)');
 
@@ -216,14 +235,14 @@ function scatterLegendDev(allMonthsData, scatterSizes, paddings) {
     dev
         .append('text')
             .attr('x', barBox.x)
-            .attr('y', barBox.y + barBox.height + 10)
+            .attr('y', barBox.y - 1)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
             .text(devRange[0].toFixed(1));
     dev
         .append('text')
             .attr('x', barBox.x + barBox.width)
-            .attr('y', barBox.y + barBox.height + 10)
+            .attr('y', barBox.y - 1)
             .attr('text-anchor', 'middle')
             .attr('font-size', '.7em')
             .text(devRange[1].toFixed(1));

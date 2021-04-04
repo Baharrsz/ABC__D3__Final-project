@@ -12,21 +12,17 @@ main {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+      -ms-flex-direction: row;
+          flex-direction: row;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
 
-.acknowledgement {
-  font-size: 12px;
-  padding-left: 20px;
-}
-
 .dashboard {
+  width: 20vw;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -37,39 +33,64 @@ main {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  padding: 15px 0;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
   background-color: #726b82;
   color: whitesmoke;
 }
 
 .dashboard * {
   margin: 0;
+  text-align: center;
 }
 
-.dashboard__picker {
+.dashboard__title {
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 30px 10px;
+}
+
+.dashboard__text {
+  padding: 20px 10px 0 10px;
+  font-size: 1em;
+}
+
+.dashboard__acknowledgement {
+  font-size: 12px;
+  position: absolute;
+  bottom: 5%;
+}
+
+.month-picker {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.dashboard__picker {
-  margin: 10px 0;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .month-picker__input {
-  margin-left: 20px;
+  margin: 10px 15px 0 15px;
 }
 
 .month-picker__label {
-  margin: 0 20px;
+  margin: 10px 0 20px 0;
+  font-size: 1em;
+  height: 1em;
 }
 
 .month-picker__btn {
-  margin-left: 15px;
-  width: 2vw;
-  height: 2vw;
+  width: 3vw;
+  height: 3vw;
   border: none;
   border-radius: 3px;
+  margin-top: 10px;
 }
 
 .month-picker__btn:focus {
@@ -79,6 +100,7 @@ main {
 .month-picker .play {
   background-image: url(/assets/play.svg);
   background-position: center;
+  background-size: cover;
 }
 
 .month-picker .pause {
@@ -86,18 +108,39 @@ main {
   background-position: center;
 }
 
-.data-picker__label {
-  margin-left: 10px;
+.data-picker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 20px 0;
 }
 
-.data-picker__input {
-  margin-left: 20px;
+.data-picker__options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
 }
 
 .charts {
   display: -ms-grid;
   display: grid;
-      grid-template-areas: "map bar" "pie scatter";
+      grid-template-areas: "map scatter" "map scatter" "map scatter" "pie bar" "pie bar" "pie bar";
+  -webkit-column-gap: 5vw;
+          column-gap: 5vw;
   -webkit-box-align: initial;
       -ms-flex-align: initial;
           align-items: initial;
@@ -117,15 +160,12 @@ main {
 }
 
 .charts__title {
-  font-size: x-large;
-}
-
-.charts__title--histogram {
-  margin-top: 0;
+  font-size: 1.5em;
 }
 
 .map {
   -ms-grid-row: 1;
+  -ms-grid-row-span: 3;
   -ms-grid-column: 1;
   grid-area: map;
 }
@@ -141,7 +181,8 @@ main {
 }
 
 .pie {
-  -ms-grid-row: 2;
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 3;
   -ms-grid-column: 1;
   grid-area: pie;
 }
@@ -152,18 +193,28 @@ main {
 
 .pie__legend {
   position: absolute;
-  top: 0;
+  top: 100px;
   right: 0;
 }
 
 .histogram {
-  -ms-grid-row: 1;
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 3;
   -ms-grid-column: 2;
   grid-area: bar;
 }
 
+.histogram__axis--x .domain {
+  display: none;
+}
+
+.histogram__axis--x line {
+  display: none;
+}
+
 .scatter {
-  -ms-grid-row: 2;
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 3;
   -ms-grid-column: 2;
   grid-area: scatter;
 }
@@ -173,9 +224,19 @@ main {
 }
 
 .scatter__legend {
+  font-size: 0.6em;
   position: absolute;
-  right: 0;
-  bottom: -1%;
+  right: 1vw;
+  bottom: 2.5vw;
+}
+
+.axis__label {
+  font-size: 1.2em;
+  fill: black;
+}
+
+.axis .tick text {
+  font-size: 9px;
 }
 
 .tooltip {
@@ -206,10 +267,5 @@ main {
   stroke-width: 2px;
   -webkit-filter: drop-shadow(0px 0px 5px #248525);
           filter: drop-shadow(0px 0px 5px #248525);
-}
-
-.no-display {
-  position: absolute;
-  top: 80%;
 }
 /*# sourceMappingURL=styles.css.map */

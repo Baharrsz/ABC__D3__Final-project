@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap");
+$scatter-padding: 5vw;
 
 * {
   font-family: "Quicksand";
@@ -11,51 +12,63 @@ body {
 main {
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
-}
-
-.acknowledgement {
-  font-size: 12px;
-  padding-left: 20px;
 }
 
 .dashboard {
   * {
     margin: 0;
+    text-align: center;
   }
+  width: 20vw;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px 0;
+  justify-content: flex-start;
   background-color: #726b82;
   color: whitesmoke;
 
-  &__picker {
-    display: flex;
+  &__title {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 30px 10px;
   }
 
-  &__picker {
-    margin: 10px 0;
+  &__text {
+    padding: 20px 10px 0 10px;
+    font-size: 1em;
+  }
+
+  &__acknowledgement {
+    font-size: 12px;
+    position: absolute;
+    bottom: 5%;
   }
 }
 
 .month-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   &__input {
-    margin-left: 20px;
+    margin: 10px 15px 0 15px;
   }
 
   &__label {
-    margin: 0 20px;
+    margin: 10px 0 20px 0;
+    font-size: 1em;
+    height: 1em;
   }
 
   &__btn {
-    margin-left: 15px;
-    width: 2vw;
-    height: 2vw;
+    width: 3vw;
+    height: 3vw;
     border: none;
     border-radius: 3px;
+    margin-top: 10px;
 
     &:focus {
       outline: none;
@@ -65,6 +78,7 @@ main {
   .play {
     background-image: url(/assets/play.svg);
     background-position: center;
+    background-size: cover;
   }
 
   .pause {
@@ -74,20 +88,28 @@ main {
 }
 
 .data-picker {
-  &__label {
-    margin-left: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
 
-  &__input {
-    margin-left: 20px;
+  &__options {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
 .charts {
   display: grid;
   grid-template-areas:
-    "map bar"
-    "pie scatter";
+    "map scatter"
+    "map scatter"
+    "map scatter"
+    "pie bar"
+    "pie bar"
+    "pie bar";
+  column-gap: 5vw;
   align-items: initial;
 
   & div {
@@ -97,11 +119,7 @@ main {
   }
 
   &__title {
-    font-size: x-large;
-
-    &--histogram {
-      margin-top: 0;
-    }
+    font-size: 1.5em;
   }
 }
 
@@ -126,23 +144,46 @@ main {
 
   &__legend {
     position: absolute;
-    top: 0;
+    top: 100px;
     right: 0;
   }
 }
 .histogram {
   grid-area: bar;
-}
 
+  &__axis {
+    &--x {
+      & .domain {
+        display: none;
+      }
+
+      & line {
+        display: none;
+      }
+    }
+  }
+}
 .scatter {
   grid-area: scatter;
   &__svgs {
     position: relative;
   }
   &__legend {
+    font-size: 0.6em;
     position: absolute;
-    right: 0;
-    bottom: -1%;
+    right: 1vw;
+    bottom: $scatter-padding / 2;
+  }
+}
+
+.axis {
+  &__label {
+    font-size: 1.2em;
+    fill: black;
+  }
+
+  & .tick text {
+    font-size: 9px;
   }
 }
 
@@ -175,9 +216,4 @@ main {
   stroke: #248525;
   stroke-width: 2px;
   filter: drop-shadow(0px 0px 5px #248525);
-}
-
-.no-display {
-  position: absolute;
-  top: 80%;
 }

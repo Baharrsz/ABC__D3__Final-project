@@ -14,20 +14,22 @@ d3.queue()
         
         const {width: sWidth, height: sHeight} = window.screen;
         const sizes = {
-            map: {width: sWidth * 0.5, height: sHeight * 0.5},
-            pie: {width:sWidth * 0.5, height: sHeight * 0.3, radHeightRatio: 0.5},
-            histogram: {width:sWidth * 0.4, height: sHeight * 0.35, padding: sWidth * 0.04},
-            scatter: {width: sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.04}
+            map: {width: sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.04},
+            pie: {width:sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.1, radHeightRatio: 0.3},
+            histogram: {width:sWidth * 0.35, height: sHeight * 0.5, padding: sWidth * 0.05},
+            scatter: {width: sWidth * 0.35, height: sHeight * 0.5, padding: sWidth * 0.05}
         }
+
 
         setChart('map', dataType, allMonthsData, sizes);
         setChart('pie', dataType, allMonthsData, sizes);
         setChart('histogram', dataType, allMonthsData, sizes);
         setChart('scatter', dataType, allMonthsData, sizes);
 
-        drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
+        let monthCovidAndGeoData = drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
         drawPie(allMonthsData, monthToShow, dataType, sizes);
         drawScatter(allMonthsData,monthToShow, dataType, sizes);
+
         
         d3.select('.month-picker__input')
             .property('max', months.length - 1)
@@ -38,7 +40,6 @@ d3.queue()
                 drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
                 drawPie(allMonthsData, monthToShow, dataType, sizes);
                 drawScatter(allMonthsData,monthToShow, dataType, sizes);
-
             });
             
         d3.selectAll('.data-picker__input')
@@ -48,8 +49,8 @@ d3.queue()
             drawPie(allMonthsData, monthToShow, dataType, sizes);
             drawScatter(allMonthsData,monthToShow, dataType, sizes);
 
-            let activeId = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id');            
-            if (activeId) drawHistogram(allMonthsData, activeId, dataType, sizes); 
+            let {id, name} = activeCountry(monthCovidAndGeoData);
+            if (id) drawHistogram(allMonthsData, id, name, dataType, sizes); 
         });
 
         let animation;
@@ -85,7 +86,7 @@ function covidDataFormatter(row, idx, headers){
         isoCode: row.iso_code,
         continent: row.continent,
         date: row.date,
-        cases: +row.new_cases,
+        cases: (row.new_cases)? +row.new_cases: 0,
         casesPerMil : +row.new_cases_per_million,
         totalCases: +row.total_cases,
         deaths: +row.new_deaths,
@@ -106,7 +107,8 @@ function codeDataFormatter(row) {
 
     return {
         alphaCode: row['Alpha-3 code'],
-        numericCode: row['Numeric code']
+        numericCode: row['Numeric code'],
+        name: row['Country']
     };
 }
 
@@ -129,7 +131,6 @@ function getMonthsData(covidData) {
                 medianAge: row.medianAge,
                 devIndex: row.devIndex,
                 vaccines: row.vaccines
-
             }
             monthsData[month].push(countryObj)
         } else {
@@ -141,7 +142,6 @@ function getMonthsData(covidData) {
     });
 
     return monthsData;
-
 }
 
 function addNumericCode(allMonthsData, countryCodes) {
@@ -162,7 +162,6 @@ function showTooltip(d, chartType, dataType) {
         let cases = (isNaN(d.properties.casesPerMil))? 'NA': d.properties.casesPerMil.toFixed(2);
         let deaths = (isNaN(d.properties.deathsPerMil))? 'NA': d.properties.deathsPerMil.toFixed(2);
         let vaccines = (isNaN(d.properties.vaccines))? 'NA': d3.format(',')(d.properties.vaccines);
-        console.log(d, population)
         html = `
                 <p class="tooltip__name">${d.properties.name}</p>
                 <p>Population: ${population}</p>
@@ -211,11 +210,24 @@ function hideTooltip(d) {
 }
 
 function setChart(chartType, dataType, allMonthsData, sizes) {
-    let {width, height} = sizes[chartType];
+    let {width, height, padding} = sizes[chartType];
 
     d3.select(`.${chartType}__chart`)
         .attr('width', width)
         .attr('height', height);
+
+
+    d3.select(`.${chartType}__chart`)
+        .append('text')
+            .classed(`${chartType}__title charts__title`, true)
+            .attr('text-anchor', 'middle')
+            .attr('x', width / 2)
+            .attr('alignment-baseline', 'hanging')
+            .attr('y', 30)
+            .attr('textLength', width - (padding || 0))
+            .attr('lengthAdjust', 'spacingAndGlyphs')
+
+            
 
 
     d3.select(`.${chartType}__chart`)
@@ -230,9 +242,9 @@ function setChart(chartType, dataType, allMonthsData, sizes) {
 
         createPieLegend(sizes.pie);
     }
-    if (chartType === 'scatter') createScatterLegend(allMonthsData, sizes.scatter)
+    if (chartType === 'scatter') createScatterLegend(allMonthsData, sizes.scatter);
+    if (chartType === 'histogram') setChartTitle('histogram')
 }
-
 
 function setChartTitle(chartType, dataType, monthToShow) {
     let titleType;
@@ -245,13 +257,16 @@ function setChartTitle(chartType, dataType, monthToShow) {
             break;
         case 'scatter': 
             titleType = 'vs Median Age, ';
+            break;
+        case 'histogram':
+            d3.select(`.${chartType}__title`)
+                .text('Click on a country in the map to see monthly data')
+                .attr('y', '50%');
+                return;
     }
 
     d3.select(`.${chartType}__title`)
-        .html(`
-            <span class="title__type">${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} ${titleType}</span>
-            <span class="title__month">${monthToShow}</span>
-        `);
+        .text(`${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} ${titleType} ${monthToShow}`)
 }
 
 function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {
@@ -300,4 +315,11 @@ function toggle(mode){
 
     d3.selectAll('.data-picker *').property('disabled', disable);
     d3.select('.month-picker__input').property('disabled', disable);
+}
+
+function activeCountry(monthCovidAndGeoData) {
+    let id = (d3.select('.active').empty())? undefined : d3.select('.active').attr('id').slice(1);
+    let name;
+    if (id) name = monthCovidAndGeoData.find(country => country.id === id).properties.name;
+    return {id, name};
 }

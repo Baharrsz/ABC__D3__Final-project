@@ -1,6 +1,6 @@
 function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
     const {width, height} = sizes.map;
-    const projectionScale = width / 7;
+    const projectionScale = width * 0.15;
     const monthData = allMonthsData[monthToShow];
 
     setChartTitle('map', dataType, monthToShow);
@@ -9,7 +9,9 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
 
     dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
                 
+    //Add covid data to the geographic data of the countries
     let geoData = topojson.feature(mapData, mapData.objects.countries).features;
+    geoData = geoData.filter(feature => feature.id !== '010');
     geoData.forEach(feature => {
         let found = monthData.find(country => country.numericCode === feature.id);
         if (found) feature.properties = found;
@@ -19,10 +21,10 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
                         .scale(projectionScale)
                         .translate([width / 2, 0.7 * height]);
     let path = d3.geoPath()
-                    .projection(projection)
+                    .projection(projection);
 
 
-
+    //Drawing the map
     let countries = d3.select('.map__main')
                         .selectAll('.country')
                             .data(geoData);
@@ -30,7 +32,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
         .enter()
             .append('path')
             .classed('country', true)
-            .attr('id', d => d.id)
+            .attr('id', d => 'c' + d.id)
             .attr('d', path)
         .merge(countries)
             .on('mousemove', (d) => showTooltip(d,'map'))
@@ -40,13 +42,14 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
                     .classed('active', false);
                 d3.select(d3.event.target).classed('active', true);
 
-                drawHistogram(allMonthsData, d.id, dataType.slice(0,dataType.indexOf('PerMil')), sizes)
+                drawHistogram(allMonthsData, d.id, d.properties.name, dataType.slice(0,dataType.indexOf('PerMil')), sizes)
             })
             .transition()
                 .duration(500)
                 .attr('fill', d => {
                 if (d.properties[dataType] === undefined) return 'gray';
                 return setMapScale(dataType)(d.properties[dataType])});
+    return geoData;
 }
 
 function setMapScale(dataType) {
