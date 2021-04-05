@@ -5,12 +5,16 @@ d3.queue()
     .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
+        console.log('covidData', covidData)
+
         let allMonthsData = getMonthsData(covidData);
+ 
         addNumericCode(allMonthsData, countryCodes);
 
         let months = Object.keys(allMonthsData).sort();
         let monthToShow = months[0];
         let dataType = 'cases';
+
         
         const {width: sWidth, height: sHeight} = window.screen;
         const sizes = {
@@ -45,6 +49,7 @@ d3.queue()
         d3.selectAll('.data-picker__input')
         .on('change', () => {
             dataType = d3.event.target.value;
+            console.log('inside picker', monthToShow)
             drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
             drawPie(allMonthsData, monthToShow, dataType, sizes);
             drawScatter(allMonthsData,monthToShow, dataType, sizes);
@@ -57,14 +62,14 @@ d3.queue()
         d3.select('.month-picker__btn')
             .on('click', () => {
                 if (d3.event.target.className.indexOf('play') >= 0) {
-                    animation = playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation)
+                    animation = playAllMonths(allMonthsData, mapData, sizes, months, dataType, animation);
+                    console.log('monthToShow inside btn', monthToShow)
                 } else stopPlay(animation);
             });
 
     });
 
         
-
 
 
 function covidDataFormatter(row, idx, headers){
@@ -82,21 +87,25 @@ function covidDataFormatter(row, idx, headers){
     if (removeList.indexOf(row.location) > -1) return;
 
     return {
-        name: row.location,
-        isoCode: row.iso_code,
-        continent: row.continent,
-        date: row.date,
-        cases: (row.new_cases)? +row.new_cases: 0,
-        casesPerMil : +row.new_cases_per_million,
-        totalCases: +row.total_cases,
-        deaths: +row.new_deaths,
-        deathsPerMil: +row.new_deaths_per_million,
-        totalDeaths: +row.total_deaths,
-        population: +row.population,
-        medianAge: +row.median_age,
-        devIndex: +row.human_development_index,
-        vaccines: +row.total_vaccinations_per_hundred
+        name: read(row.location),
+        isoCode: read(row.iso_code),
+        continent: read(row.continent),
+        date: read(row.date),
+        cases: +read(row.new_cases),
+        casesPerMil : +read(row.new_cases_per_million),
+        totalCases: +read(row.total_cases),
+        deaths: +read(row.new_deaths),
+        deathsPerMil: +read(row.new_deaths_per_million),
+        totalDeaths: +read(row.total_deaths),
+        population: +read(row.population),
+        medianAge: +read(row.median_age),
+        devIndex: +read(row.human_development_index),
+        vaccines: +read(row.total_vaccinations_per_hundred)
     };
+}
+
+function read(header) {
+    return (header === null)? undefined : header;
 }
 
 function codeDataFormatter(row) {
@@ -134,7 +143,7 @@ function getMonthsData(covidData) {
             }
             monthsData[month].push(countryObj)
         } else {
-            foundCountry.cases += row.cases;
+            foundCountry.cases = (foundCountry.cases || 0) + row.cases;
             foundCountry.casesPerMil += row.casesPerMil;
             foundCountry.deaths += row.deaths;
             foundCountry.deathsPerMil += row.deathsPerMil;
@@ -269,20 +278,21 @@ function setChartTitle(chartType, dataType, monthToShow) {
         .text(`${(dataType === 'cases')? 'New Cases of Covid' : 'New Deaths'} ${titleType} ${monthToShow}`)
 }
 
-function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animation) {
+function playAllMonths(allMonthsData, mapData, sizes, months, dataType, animation) {
 
     toggle('play');
 
     let pickerBar = d3.select('.month-picker__input');
     let monthLabel = d3.select('.month-picker__label');
-
+    let monthToShow;
     let i = +pickerBar.property('value') + 1;
 
     animation = setInterval(() => {
         if (i === months.length) {
+            monthToShow = months[i - 1];
             stopPlay(animation);
         } else {
-            let monthToShow = months[i];
+            monthToShow = months[i];
             pickerBar.property('value', i);
             monthLabel.text(monthToShow);
 
@@ -292,8 +302,9 @@ function playAllMonths(allMonthsData, mapData, dataType, sizes, months, animatio
             i++;
         }
     }, 1000);
+    console.log('monthToShow', monthToShow)
     return animation;
-};
+}
 
 function stopPlay(animation) {
     toggle('pause');
