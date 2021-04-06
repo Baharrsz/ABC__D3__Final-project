@@ -5,10 +5,8 @@ d3.queue()
     .await((error, covidData, countryCodes, mapData) => {
         if (error) console.log(error);
 
-        console.log('covidData', covidData)
 
         let allMonthsData = getMonthsData(covidData);
- 
         addNumericCode(allMonthsData, countryCodes);
 
         let months = Object.keys(allMonthsData).sort();
@@ -71,7 +69,28 @@ d3.queue()
 
         
 
-
+/** Extracts required keys from the data.
+ *
+ * @param {object} row a row in the csv.
+* @returns {array}  [daily data of a country]   
+                    [{
+                        name,
+                        isoCode,
+                        continent,
+                        date,
+                        cases,
+                        casesPerMil,
+                        totalCases,
+                        deaths,
+                        deathsPerMil,
+                        totalDeaths,
+                        population,
+                        medianAge,
+                        devIndex,
+                        vaccines
+                    }]
+    Values are either strings or numbers. If value was missing, it will be undefined or NaN respectively.
+ */
 function covidDataFormatter(row, idx, headers){
     removeList = [
         'Asia',
@@ -99,13 +118,14 @@ function covidDataFormatter(row, idx, headers){
         totalDeaths: +read(row.total_deaths),
         population: +read(row.population),
         medianAge: +read(row.median_age),
-        devIndex: +read(row.human_development_index),
+        devIndex: read(row.human_development_index),
         vaccines: +read(row.total_vaccinations_per_hundred)
     };
 }
 
+//Just a shortcut to be used in covidDataFormatter()
 function read(header) {
-    return (header === null)? undefined : header;
+    return (header.length === 0)? undefined : header;
 }
 
 function codeDataFormatter(row) {
@@ -121,6 +141,26 @@ function codeDataFormatter(row) {
     };
 }
 
+/** Turns daily data to monthly data. 
+ * 
+ * @param {array} covidData Returned value of covidDataFormatter.
+ * @returns {array} [{month: monthData}]
+                    monthData [
+                        name,
+                        isoCode,
+                        continent,
+                        date,
+                        cases,
+                        casesPerMil,
+                        deaths,
+                        deathsPerMil,
+                        population,
+                        medianAge,
+                        devIndex,
+                        vaccines
+                    ]
+                    Values of cases, casesPerMil, deaths, and deathsPerMil are accumalation of values for the whole month.
+ */
 function getMonthsData(covidData) {
     let monthsData = {};
     covidData.forEach((row, idx) => {
@@ -143,14 +183,19 @@ function getMonthsData(covidData) {
             }
             monthsData[month].push(countryObj)
         } else {
-            foundCountry.cases = (foundCountry.cases || 0) + row.cases;
-            foundCountry.casesPerMil += row.casesPerMil;
-            foundCountry.deaths += row.deaths;
-            foundCountry.deathsPerMil += row.deathsPerMil;
+            foundCountry.cases = add(row, foundCountry, 'cases');
+            foundCountry.casesPerMil = add(row, foundCountry, 'casesPerMil');
+            foundCountry.deaths = add(row, foundCountry, 'deaths');
+            foundCountry.deathsPerMil = add(row, foundCountry, 'deathsPerMil');
         }
     });
 
     return monthsData;
+}
+
+//Just a shortcut to be used in getMonthsData()
+function add(row, foundCountry, header) {
+    return (!isNaN(row[header]))? (foundCountry[header] || 0) + row[header] : undefined;
 }
 
 function addNumericCode(allMonthsData, countryCodes) {

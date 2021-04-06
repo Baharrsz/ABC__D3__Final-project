@@ -1,9 +1,10 @@
 function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
-    const monthData = allMonthsData[monthToShow];
+    let monthData = allMonthsData[monthToShow];
 
     setChartTitle('scatter', dataType, monthToShow);
 
     dataType = (dataType === 'cases')? 'casesPerMil': 'deathsPerMil';
+    monthData = cleanScatterData(monthData, dataType);
 
 
     const xScale = setScatterScale(allMonthsData, sizes.scatter, 'x', dataType, 0);
@@ -37,6 +38,13 @@ function drawScatter(allMonthsData, monthToShow, dataType, sizes) {
             .attr('cx', d => xScale(d[dataType]))
             .attr('cy', d => yScale(d.medianAge));
 
+}
+
+function cleanScatterData(monthData, dataType) {
+    monthData.forEach(country => {
+        if (isNaN(country.vaccines)) country.vaccines = 0;
+    })
+    return monthData.filter(ctry => !isNaN(ctry[dataType]) && ctry.medianAge && ctry.devIndex);
 }
 
 function setScatterScale(allMonthsData, scatterSizes, dimension, key, min) {

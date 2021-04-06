@@ -46,9 +46,10 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
             })
             .transition()
                 .duration(500)
-                .attr('fill', d => {
-                if (d.properties[dataType] === undefined) return 'gray';
-                return setMapScale(dataType)(d.properties[dataType])});
+                .attr('fill', d => { 
+                    if (d.properties[dataType] === undefined || isNaN(d.properties[dataType])) return 'gray';
+                    return setMapScale(dataType)(d.properties[dataType]);
+                });
     return geoData;
 }
 
