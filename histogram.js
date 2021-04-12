@@ -2,7 +2,6 @@ function drawHistogram(allMonthsData, countryId, countryName, dataType, sizes) {
     const {width, height, padding} = sizes.histogram;
 
     allMonthsData = formatHistogramData(allMonthsData, countryId, dataType);
-    console.log(allMonthsData)
 
     setHistogramChart(dataType, countryName);
 
@@ -150,7 +149,7 @@ function drawHistAxes(data, dataType, monthNames, sizes, barWidth) {
     d3.select('.histogram__axis--y')
         .append('text')
             .classed('axis__label', true)
-            .attr('x', '-50%')
+            .attr('x', -height / 2)
             .attr('y', - padding / 2)
             .attr('transform', 'rotate(-90)')
             .attr('text-anchor', 'middle')

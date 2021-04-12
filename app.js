@@ -1,3 +1,5 @@
+let monthToShow;
+
 d3.queue()
     .defer(d3.csv, 'data/covid-data.csv', covidDataFormatter)
     .defer(d3.csv, 'data/countries_codes_and_coordinates.csv', codeDataFormatter)
@@ -10,11 +12,11 @@ d3.queue()
         addNumericCode(allMonthsData, countryCodes);
 
         let months = Object.keys(allMonthsData).sort();
-        let monthToShow = months[0];
+        monthToShow = months[0];
         let dataType = 'cases';
 
         
-        const {width: sWidth, height: sHeight} = window.screen;
+        const {innerWidth: sWidth, innerHeight: sHeight} = window;
         const sizes = {
             map: {width: sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.04},
             pie: {width:sWidth * 0.4, height: sHeight * 0.5, padding: sWidth * 0.1, radHeightRatio: 0.3},
@@ -47,7 +49,6 @@ d3.queue()
         d3.selectAll('.data-picker__input')
         .on('change', () => {
             dataType = d3.event.target.value;
-            console.log('inside picker', monthToShow)
             drawMap(allMonthsData, mapData, monthToShow, dataType, sizes);
             drawPie(allMonthsData, monthToShow, dataType, sizes);
             drawScatter(allMonthsData,monthToShow, dataType, sizes);
@@ -61,7 +62,6 @@ d3.queue()
             .on('click', () => {
                 if (d3.event.target.className.indexOf('play') >= 0) {
                     animation = playAllMonths(allMonthsData, mapData, sizes, months, dataType, animation);
-                    console.log('monthToShow inside btn', monthToShow)
                 } else stopPlay(animation);
             });
 
@@ -277,7 +277,7 @@ function setChart(chartType, dataType, allMonthsData, sizes) {
             .attr('text-anchor', 'middle')
             .attr('x', width / 2)
             .attr('alignment-baseline', 'hanging')
-            .attr('y', 30)
+            .attr('y', 0.04 * height )
             .attr('textLength', width - (padding || 0))
             .attr('lengthAdjust', 'spacingAndGlyphs')
 
@@ -329,10 +329,9 @@ function playAllMonths(allMonthsData, mapData, sizes, months, dataType, animatio
 
     let pickerBar = d3.select('.month-picker__input');
     let monthLabel = d3.select('.month-picker__label');
-    let monthToShow;
     let i = +pickerBar.property('value') + 1;
 
-    animation = setInterval(() => {
+    animation = setInterval((() => {
         if (i === months.length) {
             monthToShow = months[i - 1];
             stopPlay(animation);
@@ -346,8 +345,8 @@ function playAllMonths(allMonthsData, mapData, sizes, months, dataType, animatio
             drawScatter(allMonthsData, monthToShow, dataType, sizes);
             i++;
         }
-    }, 1000);
-    console.log('monthToShow', monthToShow)
+    }), 1000);
+
     return animation;
 }
 

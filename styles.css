@@ -8,7 +8,6 @@ body {
 }
 
 main {
-  height: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -48,18 +47,22 @@ main {
 .dashboard__title {
   font-size: 1.5em;
   font-weight: bold;
-  padding: 30px 10px;
+  padding: 3vh 1vw;
 }
 
 .dashboard__text {
-  padding: 20px 10px 0 10px;
+  padding: 2vh 1vw 0 1vw;
   font-size: 1em;
 }
 
 .dashboard__acknowledgement {
   font-size: 12px;
   position: absolute;
-  bottom: 5%;
+  bottom: 1vh;
+}
+
+.dashboard__acknowledgement a {
+  display: block;
 }
 
 .month-picker {

@@ -1,6 +1,6 @@
 function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
     const {width, height} = sizes.map;
-    const projectionScale = width * 0.15;
+    const projectionScale = width * 0.13;
     const monthData = allMonthsData[monthToShow];
 
     setChartTitle('map', dataType, monthToShow);
@@ -19,7 +19,7 @@ function drawMap(allMonthsData, mapData, monthToShow, dataType, sizes) {
 
     let projection = d3.geoMercator()
                         .scale(projectionScale)
-                        .translate([width / 2, 0.7 * height]);
+                        .translate([width / 2, 0.75 * height]);
     let path = d3.geoPath()
                     .projection(projection);
 

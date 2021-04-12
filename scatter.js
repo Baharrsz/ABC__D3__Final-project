@@ -123,7 +123,7 @@ function drawScatterAxes(xScale, yScale, scatterSizes, dataType) {
     d3.select('.scatter__axis--y')
         .append('text')
             .classed('axis__label', true)
-            .attr('x', '-50%')
+            .attr('x', -height / 2)
             .attr('y', - padding / 3)
             .attr('transform', 'rotate(-90)')
             .attr('text-anchor', 'middle')
