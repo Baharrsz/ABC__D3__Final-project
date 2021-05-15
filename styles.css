@@ -1,0 +1,274 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap");
+* {
+  font-family: "Quicksand";
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.dashboard {
+  width: 20vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  background-color: #726b82;
+  color: whitesmoke;
+}
+
+.dashboard * {
+  margin: 0;
+  text-align: center;
+}
+
+.dashboard__title {
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 3vh 1vw;
+}
+
+.dashboard__text {
+  padding: 2vh 1vw 0 1vw;
+  font-size: 1em;
+}
+
+.dashboard__acknowledgement {
+  font-size: 12px;
+  position: absolute;
+  bottom: 1vh;
+}
+
+.dashboard__acknowledgement a {
+  display: block;
+}
+
+.month-picker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.month-picker__input {
+  margin: 10px 15px 0 15px;
+}
+
+.month-picker__label {
+  margin: 10px 0 20px 0;
+  font-size: 1em;
+  height: 1em;
+}
+
+.month-picker__btn {
+  width: 3vw;
+  height: 3vw;
+  border: none;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+.month-picker__btn:focus {
+  outline: none;
+}
+
+.month-picker .play {
+  background-image: url(/assets/play.svg);
+  background-position: center;
+  background-size: cover;
+}
+
+.month-picker .pause {
+  background-image: url(/assets/pause.svg);
+  background-position: center;
+}
+
+.data-picker {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 20px 0;
+}
+
+.data-picker__options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+.charts {
+  display: -ms-grid;
+  display: grid;
+      grid-template-areas: "map scatter" "map scatter" "map scatter" "pie bar" "pie bar" "pie bar";
+  -webkit-column-gap: 5vw;
+          column-gap: 5vw;
+  -webkit-box-align: initial;
+      -ms-flex-align: initial;
+          align-items: initial;
+}
+
+.charts div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.charts__title {
+  font-size: 1.5em;
+}
+
+.map {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 3;
+  -ms-grid-column: 1;
+  grid-area: map;
+}
+
+.map__svgs {
+  position: relative;
+}
+
+.map__legend {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.pie {
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 3;
+  -ms-grid-column: 1;
+  grid-area: pie;
+}
+
+.pie__svgs {
+  position: relative;
+}
+
+.pie__legend {
+  position: absolute;
+  top: 100px;
+  right: 0;
+}
+
+.histogram {
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 3;
+  -ms-grid-column: 2;
+  grid-area: bar;
+}
+
+.histogram__axis--x .domain {
+  display: none;
+}
+
+.histogram__axis--x line {
+  display: none;
+}
+
+.scatter {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 3;
+  -ms-grid-column: 2;
+  grid-area: scatter;
+}
+
+.scatter__svgs {
+  position: relative;
+}
+
+.scatter__legend {
+  font-size: 0.6em;
+  position: absolute;
+  right: 1vw;
+  bottom: 2.5vw;
+}
+
+.axis__label {
+  font-size: 1.2em;
+  fill: black;
+}
+
+.axis .tick text {
+  font-size: 9px;
+}
+
+.tooltip {
+  opacity: 0;
+  position: absolute;
+  margin: 10px;
+  padding: 5px;
+  pointer-events: none;
+  background-color: white;
+  border-radius: 3px;
+}
+
+.tooltip p {
+  margin: 0;
+  font-size: xx-small;
+}
+
+.tooltip__name {
+  font-weight: bold;
+}
+
+.country {
+  stroke: lightgray;
+}
+
+.active {
+  stroke: #248525;
+  stroke-width: 2px;
+  -webkit-filter: drop-shadow(0px 0px 5px #248525);
+          filter: drop-shadow(0px 0px 5px #248525);
+}
+/*# sourceMappingURL=styles.css.map */
