@@ -35,7 +35,7 @@ main {
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
-  background-color: #726b82;
+  background-color: red;
   color: whitesmoke;
 }
 
