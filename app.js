@@ -19,6 +19,8 @@ d3.queue()
   .await((error, covidData, countryCodes, mapData) => {
     if (error) console.log(error);
 
+    console.log("covidData", covidData);
+
     let allMonthsData = getMonthsData(covidData);
     addNumericCode(allMonthsData, countryCodes);
 
