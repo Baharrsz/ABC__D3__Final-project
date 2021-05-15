@@ -1,25 +1,19 @@
 let monthToShow;
 
 d3.queue()
-  .defer(d3.csv, "../data/owid-covid-data.csv", covidDataFormatter)
+  .defer(d3.csv, "owid-covid-data.csv", covidDataFormatter)
   //   .defer(
   //     d3.csv,
   //     "https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-data.csv",
   //     covidDataFormatter
   //   )
-  .defer(
-    d3.csv,
-    "../data/countries_codes_and_coordinates.csv",
-    codeDataFormatter
-  )
+  .defer(d3.csv, "countries_codes_and_coordinates.csv", codeDataFormatter)
   .defer(
     d3.json,
     "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"
   )
   .await((error, covidData, countryCodes, mapData) => {
     if (error) console.log(error);
-
-    console.log("covidData", covidData);
 
     let allMonthsData = getMonthsData(covidData);
     addNumericCode(allMonthsData, countryCodes);
