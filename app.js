@@ -1,7 +1,7 @@
 let monthToShow;
 
 d3.queue()
-  .defer(d3.csv, "owid-covid-data.csv", covidDataFormatter)
+  .defer(d3.csv, "../data/owid-covid-data.csv", covidDataFormatter)
   //   .defer(
   //     d3.csv,
   //     "https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-data.csv",
