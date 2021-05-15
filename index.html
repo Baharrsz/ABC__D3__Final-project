@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Final Project - Covid Data</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <main class="main">
+        <section class="dashboard">
+            <h1 class="dashboard__title">Covid19 Data from January 2020 to March 2021</h1>
+            <div class="dashboard__picker month-picker">
+                <h4 class="dashboard__text month-picker__text">Pick a month:</h4>
+                <input name="month-picker" type="range" class="month-picker__input" step=1 min=0 value=0>
+                <label class="month-picker__label" for="month-picker"></label>
+                <h4 class="dashboard__text month-picker__text"> OR</h4>
+                <h4 class="dashboard__text month-picker__text"> Click on 'Play' to review all months</h4>
+                <button class="month-picker__btn btn play">
+            </div>
+            <div class="dashboard__picker data-picker">
+                <h4 class="dashboard__text data-picker__text">Select data type:</h4>
+                <div class="data-picker__options">
+                    <div class="data-picker__option">
+                        <input name="data-picker" type="radio" class="data-picker__input" id="case" value="cases" checked>
+                        <label class="data-picker__label" for="data-picker">New Cases</label>
+                    </div>
+                    <div class="data-picker__option">
+                        <input name="data-picker" type="radio" class="data-picker__input" id="death" value="deaths">
+                        <label class="data-picker__label" for="data-picker">New Deaths</label>
+                    </div>    
+                </div>
+            </div>
+            <h3 class="dashboard__text">Click on a country in the map to see monthly data.</h3>
+            <div class="dashboard__acknowledgement">Data provided by:
+                <a href="https://ourworldindata.org/coronavirus-source-data" target="_blank">Our World in Data</a>
+            </div>
+
+        </section>
+        <section class="charts">
+            <div class="chart charts__map map">
+                <div class="svgs map__svgs">
+                    <svg class="map__legend"></svg>
+                    <svg class="chart__chart map__chart"></svg>
+                </div>
+            </div>
+            <div class="chart charts__pie pie">
+                <div class="svgs pie__svgs">
+                    <svg class="pie__legend"></svg>
+                    <svg class="chart__chart pie__chart"></svg>
+                </div>
+            </div>
+            <div class="chart charts__histogram histogram">
+                <svg class="histogram__chart"></svg>
+            </div>
+            <div class="chart charts__scatter scatter">
+                <div class="svgs scatter__svgs">
+                    <svg class="chart__chart scatter__chart"></svg>
+                    <svg class="scatter__legend"></svg>
+                </div>
+            </div>
+        </section>
+    </main>
+ 
+    <div class="tooltip"></div>
+
+
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="../pie.js"></script>
+    <script src="../histogram.js"></script>
+    <script src="../scatter.js"></script>
+    <script src="../map.js"></script>
+    <script src="../app.js"></script>
+</body>
+</html>
